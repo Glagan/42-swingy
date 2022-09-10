@@ -1,5 +1,6 @@
 package org.glagan;
 
+import org.glagan.Core.Game;
 import org.glagan.Display.DisplayFactory;
 import org.glagan.Display.Mode;
 

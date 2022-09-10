@@ -1,6 +1,6 @@
 package org.glagan.Controller;
 
-import org.glagan.Game;
+import org.glagan.Core.Game;
 
 public class Controller {
     protected Game game;

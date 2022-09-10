@@ -1,6 +1,6 @@
 package org.glagan.Display;
 
-import org.glagan.Game;
+import org.glagan.Core.Game;
 import org.glagan.View.View;
 
 public abstract class Display {
@@ -28,5 +28,4 @@ public abstract class Display {
     }
 
     abstract public void run();
-
 }
