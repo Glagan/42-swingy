@@ -3,14 +3,14 @@ package org.glagan.View;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
 
-public class HeroSelectOrCreate extends View {
-    public HeroSelectOrCreate(Game game) {
+public class HeroSelection extends View {
+    public HeroSelection(Game game) {
         super(game);
     }
 
     @Override
     public String getContext() {
-        return "HeroSelectOrCreate";
+        return "HeroSelection";
     }
 
     @Override

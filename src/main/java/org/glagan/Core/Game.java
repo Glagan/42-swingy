@@ -1,9 +1,15 @@
 package org.glagan.Core;
 
+import java.util.HashMap;
+
+import org.glagan.Controller.Controller;
+import org.glagan.Controller.GameController;
+import org.glagan.Controller.MapController;
+import org.glagan.Controller.StartController;
 import org.glagan.Display.Display;
 import org.glagan.Display.DisplayFactory;
 import org.glagan.Display.Mode;
-import org.glagan.View.HeroSelectOrCreate;
+import org.glagan.View.HeroSelection;
 import org.glagan.View.Start;
 import org.glagan.View.View;
 
@@ -15,16 +21,26 @@ public class Game {
 
     protected boolean playing;
 
+    protected HashMap<String, Controller> controllers;
+
     public Game(Display display) {
         this.display = display;
         this.display.setView(new Start(this));
         playing = true;
+        controllers = new HashMap<>();
+        controllers.put("Start", new StartController(this));
+        controllers.put("Map", new GameController(this));
+        controllers.put("Game", new MapController(this));
     }
 
     public void run() {
         while (playing) {
             display.run();
         }
+    }
+
+    public void setView(View view) {
+        this.display.setView(view);
     }
 
     public void dispatch(Action action) {
@@ -62,15 +78,18 @@ public class Game {
                 error = "";
                 break;
             case "home":
-                display.setView(new HeroSelectOrCreate(this));
+                display.setView(new HeroSelection(this));
                 error = "";
                 break;
         }
 
         // * Map Action to Controller and execute logic
         if (error == null) {
-            if (action.getContext().equals("Start") && action.getAction().equals("continue")) {
-                display.setView(new HeroSelectOrCreate(this));
+            Controller controller = controllers.get(action.getContext());
+            if (controller != null) {
+                error = controller.execute(action);
+            } else {
+                error = "Unknown context `" + action.getContext() + "`";
             }
         }
 
