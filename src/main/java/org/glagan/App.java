@@ -1,10 +1,7 @@
 package org.glagan;
 
-import java.util.Set;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
+import org.glagan.Display.DisplayFactory;
+import org.glagan.Display.Mode;
 
 /**
  * Hello world!
@@ -12,14 +9,20 @@ import jakarta.validation.ValidatorFactory;
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Mode displayMode = Mode.CONSOLE;
+        if (args.length == 1) {
+            switch (args[0]) {
+                case "console":
+                    displayMode = Mode.CONSOLE;
+                    break;
+                case "gui":
+                    displayMode = Mode.GUI;
+                    break;
+            }
+        }
 
-        Hero hero = new Hero();
-        System.out.println("Hero: " + hero);
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<Hero>> constraintViolations = validator.validate(hero);
-        System.out.println(constraintViolations);
+        Game game = new Game(DisplayFactory.newDisplay(displayMode));
+        System.out.println("Game " + game);
+        game.run();
     }
 }

@@ -1,6 +1,8 @@
-package org.glagan;
+package org.glagan.Map;
 
 import java.util.List;
+
+import org.glagan.Character.Enemy;
 
 public class Location {
     protected int x;

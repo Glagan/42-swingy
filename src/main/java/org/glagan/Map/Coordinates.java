@@ -1,4 +1,4 @@
-package org.glagan;
+package org.glagan.Map;
 
 public class Coordinates {
     protected int x;

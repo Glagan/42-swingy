@@ -1,4 +1,4 @@
-package org.glagan;
+package org.glagan.Map;
 
 import java.util.List;
 

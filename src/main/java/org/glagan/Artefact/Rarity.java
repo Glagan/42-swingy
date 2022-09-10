@@ -1,4 +1,4 @@
-package org.glagan;
+package org.glagan.Artefact;
 
 public enum Rarity {
     LEGENDARY,
