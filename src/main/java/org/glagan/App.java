@@ -1,8 +1,12 @@
 package org.glagan;
 
-import org.glagan.Core.Game;
+// import org.glagan.Character.Warrior;
+// import org.glagan.Core.Game;
+import org.glagan.Core.Save;
+import org.glagan.Core.Swingy;
 import org.glagan.Display.DisplayFactory;
 import org.glagan.Display.Mode;
+// import org.glagan.Map.Map;
 
 /**
  * Hello world!
@@ -22,8 +26,23 @@ public class App {
             }
         }
 
-        Game game = new Game(DisplayFactory.newDisplay(displayMode));
-        System.out.println("Game " + game);
-        game.run();
+        // Ensure the saves directory exists
+        if (!Save.ensureSavesDirectoryExists()) {
+            return;
+        }
+
+        // Game test = new Game(new Warrior("Glagan"), new Map("Test", 1, 5, null),
+        // null, null);
+        // System.out.println(test.serialize());
+
+        // String[] files = Save.listSaveFiles();
+        // System.out.println("Found " + files.length + " saves");
+        // for (String string : files) {
+        // System.out.println("save: " + string);
+        // }
+
+        Swingy swingy = new Swingy(DisplayFactory.newDisplay(displayMode));
+        System.out.println("Swingy " + swingy);
+        swingy.run();
     }
 }

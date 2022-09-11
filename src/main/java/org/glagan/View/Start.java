@@ -1,10 +1,10 @@
 package org.glagan.View;
 
-import org.glagan.Core.Game;
+import org.glagan.Core.Swingy;
 
 public class Start extends View {
-    public Start(Game game) {
-        super(game);
+    public Start(Swingy swingy) {
+        super(swingy);
     }
 
     @Override

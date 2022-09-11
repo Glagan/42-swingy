@@ -1,11 +1,11 @@
 package org.glagan.View;
 
-import org.glagan.Core.Game;
+import org.glagan.Core.Swingy;
 import org.glagan.Core.Input;
 
 public class HeroSelection extends View {
-    public HeroSelection(Game game) {
-        super(game);
+    public HeroSelection(Swingy swingy) {
+        super(swingy);
     }
 
     @Override
@@ -22,6 +22,6 @@ public class HeroSelection extends View {
         System.out.println("Select your hero");
         // TODO Display all heroes
         String input = Input.ask("> [s]elect {number} [c]reate", null);
-        this.action().from(input).dispatch(game);
+        this.action().from(input).dispatch(swingy);
     }
 }

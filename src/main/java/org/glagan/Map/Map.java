@@ -17,4 +17,11 @@ public class Map {
 
     @NotNull
     protected List<List<Location>> locations;
+
+    public Map(String name, int level, int size, List<List<Location>> locations) {
+        this.name = name;
+        this.level = level;
+        this.size = size;
+        this.locations = locations;
+    }
 }

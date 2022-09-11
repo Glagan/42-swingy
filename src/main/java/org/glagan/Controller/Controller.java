@@ -4,17 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import org.glagan.Core.Action;
-import org.glagan.Core.Game;
+import org.glagan.Core.Swingy;
 
 public class Controller {
-    protected Game game;
+    protected Swingy swingy;
 
     protected String context;
 
     protected HashMap<String, String> functions;
 
-    protected Controller(Game game, String context, HashMap<String, String> functions) {
-        this.game = game;
+    protected Controller(Swingy swingy, String context, HashMap<String, String> functions) {
+        this.swingy = swingy;
         this.context = context;
         this.functions = functions;
     }

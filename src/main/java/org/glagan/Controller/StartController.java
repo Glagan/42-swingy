@@ -3,12 +3,11 @@ package org.glagan.Controller;
 import java.util.HashMap;
 
 import org.glagan.Core.Action;
-import org.glagan.Core.Game;
 import org.glagan.View.HeroSelection;
 
 public class StartController extends Controller {
-    public StartController(Game game) {
-        super(game, "Start", new HashMap<String, String>() {
+    public StartController(org.glagan.Core.Swingy swingy) {
+        super(swingy, "Start", new HashMap<String, String>() {
             {
                 put("continue", "menuContinue");
             }
@@ -16,7 +15,7 @@ public class StartController extends Controller {
     }
 
     public String menuContinue(Action action) {
-        game.setView(new HeroSelection(game));
+        swingy.setView(new HeroSelection(swingy));
         return null;
     }
 }

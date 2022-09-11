@@ -2,13 +2,13 @@ package org.glagan.View;
 
 import org.glagan.Core.Action;
 import org.glagan.Core.ActionBuilder;
-import org.glagan.Core.Game;
+import org.glagan.Core.Swingy;
 
 abstract public class View {
-    protected Game game;
+    protected Swingy swingy;
 
-    public View(Game game) {
-        this.game = game;
+    public View(Swingy swingy) {
+        this.swingy = swingy;
     }
 
     abstract public String getContext();
@@ -18,7 +18,7 @@ abstract public class View {
     abstract public void displayInGUI();
 
     protected void dispatch(String action, String[] arguments) {
-        this.game.dispatch(new Action(action, this.getContext(), arguments));
+        this.swingy.dispatch(new Action(action, this.getContext(), arguments));
     }
 
     protected ActionBuilder action() {

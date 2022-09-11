@@ -36,8 +36,8 @@ public class ActionBuilder {
         return new Action(this._action, this._context, this._arguments);
     }
 
-    public void dispatch(Game game) {
+    public void dispatch(Swingy swingy) {
         Action action = this.build();
-        game.dispatch(action);
+        swingy.dispatch(action);
     }
 }
