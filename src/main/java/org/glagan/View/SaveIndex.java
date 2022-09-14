@@ -20,11 +20,12 @@ public class SaveIndex extends View {
         if (saves != null) {
             for (int i = 0; i < saves.length; i++) {
                 Save save = saves[i];
-                System.out.print(i + 1 + "\t");
                 if (save.isCorrupted()) {
+                    System.out.print(" \t");
                     System.out.print(save.getPath() + ", Corrupted: " + save.getError());
                 } else {
                     Hero hero = save.getGame().getHero();
+                    System.out.print(i + 1 + "\t");
                     System.out.print(
                             hero.getName() + ", " + hero.getClass().getSimpleName() + " level " + hero.getLevel());
                 }

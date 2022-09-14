@@ -124,7 +124,7 @@ public class SaveController extends Controller {
                     }
                 }
             } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("list")) {
-                continue;
+                return;
             } else {
                 System.out.println("Invalid command `" + input + "`");
             }
