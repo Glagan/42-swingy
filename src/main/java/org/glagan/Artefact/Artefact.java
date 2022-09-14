@@ -1,6 +1,6 @@
 package org.glagan.Artefact;
 
-import org.glagan.Map.Caracteristics;
+import org.glagan.World.Caracteristics;
 
 import jakarta.validation.constraints.NotNull;
 

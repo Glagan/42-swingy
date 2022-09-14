@@ -1,27 +1,19 @@
 package org.glagan.View;
 
-import org.glagan.Core.Action;
-import org.glagan.Core.ActionBuilder;
-import org.glagan.Core.Swingy;
+import org.glagan.Display.Display;
+import org.glagan.Display.Mode;
 
 abstract public class View {
-    protected Swingy swingy;
+    abstract public void console();
 
-    public View(Swingy swingy) {
-        this.swingy = swingy;
-    }
+    abstract public void gui();
 
-    abstract public String getContext();
-
-    abstract public void displayOnConsole();
-
-    abstract public void displayInGUI();
-
-    protected void dispatch(String action, String[] arguments) {
-        this.swingy.dispatch(new Action(action, this.getContext(), arguments));
-    }
-
-    protected ActionBuilder action() {
-        return new ActionBuilder().context(this.getContext());
+    final public void render() {
+        Mode mode = Display.getDisplay();
+        if (mode.equals(Mode.CONSOLE)) {
+            this.console();
+        } else {
+            this.gui();
+        }
     }
 }

@@ -17,7 +17,7 @@ public class Input {
             if (prefix != null) {
                 System.out.print(prefix);
             } else {
-                System.out.print("action: ");
+                System.out.print("command: ");
             }
             input = scanner.nextLine();
         } catch (IllegalStateException | NoSuchElementException e) {

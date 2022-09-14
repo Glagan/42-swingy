@@ -1,21 +1,21 @@
 package org.glagan.Controller;
 
-import java.util.HashMap;
-
-import org.glagan.Core.Action;
-import org.glagan.View.HeroSelection;
+import org.glagan.View.Start;
 
 public class StartController extends Controller {
     public StartController(org.glagan.Core.Swingy swingy) {
-        super(swingy, "Start", new HashMap<String, String>() {
-            {
-                put("continue", "menuContinue");
-            }
-        });
+        super(swingy);
     }
 
-    public String menuContinue(Action action) {
-        swingy.setView(new HeroSelection(swingy));
-        return null;
+    @Override
+    public void reset() {
+
     }
+
+    @Override
+    public void run() {
+        new Start().render();
+        swingy.useSaveController();
+    }
+
 }

@@ -1,6 +1,6 @@
 package org.glagan.Character;
 
-import org.glagan.Map.Caracteristics;
+import org.glagan.World.Caracteristics;
 
 public class Paladin extends Hero {
     public Paladin(String name) {

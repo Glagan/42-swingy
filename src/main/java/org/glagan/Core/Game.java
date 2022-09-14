@@ -1,11 +1,16 @@
 package org.glagan.Core;
 
+import java.io.Reader;
+
+import org.glagan.Adapters.GsonCustomBuilder;
 import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
-import org.glagan.Map.Map;
+import org.glagan.World.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -63,7 +68,12 @@ public class Game {
     }
 
     public String serialize() {
-        Gson gson = new Gson();
+        Gson gson = GsonCustomBuilder.getBuilder().create();
         return gson.toJson(this);
+    }
+
+    static public Game deserialize(Reader reader) throws JsonSyntaxException, JsonIOException {
+        Gson gson = GsonCustomBuilder.getBuilder().create();
+        return gson.fromJson(reader, Game.class);
     }
 }

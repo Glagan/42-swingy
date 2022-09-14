@@ -2,8 +2,11 @@ package org.glagan.Character;
 
 import org.glagan.Artefact.Artefact;
 import org.glagan.Artefact.ArtefactSlot;
-import org.glagan.Map.Caracteristics;
-import org.glagan.Map.Coordinates;
+import org.glagan.World.Caracteristics;
+import org.glagan.World.Coordinates;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -37,6 +40,8 @@ public abstract class Hero {
 
     protected Hero(String name) {
         this.name = name;
+        this.level = 1;
+        this.experience = 0;
     }
 
     abstract public String className();
@@ -75,5 +80,26 @@ public abstract class Hero {
                 this.weapon = null;
                 break;
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public long getExperience() {
+        return experience;
+    }
+
+    public JsonElement serialize() {
+        Gson gson = new Gson();
+        return gson.toJsonTree(this);
     }
 }

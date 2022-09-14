@@ -1,4 +1,4 @@
-package org.glagan.Map;
+package org.glagan.World;
 
 public enum Biome {
     PLAIN,

@@ -1,7 +1,7 @@
 package org.glagan.Controller;
 
-public class GameController extends Controller {
-    public GameController(org.glagan.Core.Swingy swingy) {
+public class FightController extends Controller {
+    public FightController(org.glagan.Core.Swingy swingy) {
         super(swingy);
     }
 
