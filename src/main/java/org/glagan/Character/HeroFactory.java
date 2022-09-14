@@ -2,22 +2,22 @@ package org.glagan.Character;
 
 public class HeroFactory {
     public static Class<?> classFromString(String type) {
-        if (type.equals("Warrior")) {
+        if (type.equalsIgnoreCase("Warrior")) {
             return Warrior.class;
-        } else if (type.equals("Magician")) {
+        } else if (type.equalsIgnoreCase("Magician")) {
             return Magician.class;
-        } else if (type.equals("Paladin")) {
+        } else if (type.equalsIgnoreCase("Paladin")) {
             return Paladin.class;
         }
         return null;
     }
 
     public static Hero newHero(String type, String name) {
-        if (type.equals("Warrior")) {
+        if (type.equalsIgnoreCase("Warrior")) {
             return new Warrior(name);
-        } else if (type.equals("Magician")) {
+        } else if (type.equalsIgnoreCase("Magician")) {
             return new Magician(name);
-        } else if (type.equals("Paladin")) {
+        } else if (type.equalsIgnoreCase("Paladin")) {
             return new Paladin(name);
         }
         return null;

@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.Set;
 
+import org.glagan.Character.Hero;
+import org.glagan.Character.HeroFactory;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
 import org.glagan.Core.Save;
@@ -84,49 +86,49 @@ public class SaveController extends Controller {
         }
     }
 
-    protected int waitOrAskForInput() {
+    protected String waitOrAskForInput(String message) {
         if (Display.getDisplay().equals(Mode.CONSOLE)) {
-            while (true) {
-                String input = Input.ask("> [s]elect {number} [c]reate [l]ist", null);
-                if (input == null) {
-                    return -1;
-                }
-                if (input.equalsIgnoreCase("c") || input.equalsIgnoreCase("create")) {
-                    this.state = SaveState.CREATE;
-                    break;
-                } else if (input.startsWith("s ") || input.startsWith("select ")) {
-                    String[] parts = input.split(" ");
-                    if (parts.length != 2) {
-                        System.out.println("Invalid command `" + input + "`");
-                    } else {
-                        try {
-                            int id = Integer.parseInt(parts[1]);
-                            if (id <= 0) {
-                                System.out.println("Invalid selected hero `" + id + "`");
-                            } else {
-                                return id;
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid selected hero `" + parts[1] + "`");
-                        }
-                    }
-                } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("list")) {
-                    continue;
-                } else {
-                    System.out.println("Invalid command `" + input + "`");
-                }
-            }
+            String input = Input.ask(message != null ? message : "> action", null);
+            return input;
         } else {
             // TODO wait for a variable to change inside a view
         }
-        return -1;
+        return null;
     }
 
     protected void saveIndex() {
         Save[] saves = this.getSaves();
         SaveIndex saveIndex = new SaveIndex(saves);
         saveIndex.render();
-        int saveId = this.waitOrAskForInput();
+        int saveId = -1;
+        while (saveId < 1) {
+            String input = this.waitOrAskForInput("> [s]elect {number} [c]reate [l]ist");
+            if (input.equalsIgnoreCase("c") || input.equalsIgnoreCase("create")) {
+                this.state = SaveState.CREATE;
+                break;
+            } else if (input.startsWith("s ") || input.startsWith("select ")) {
+                String[] parts = input.split(" ");
+                if (parts.length != 2) {
+                    System.out.println("Invalid command `" + input + "`");
+                } else {
+                    try {
+                        int id = Integer.parseInt(parts[1]);
+                        if (id <= 0) {
+                            System.out.println("Invalid selected hero `" + id + "`");
+                        } else {
+                            saveId = id;
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid selected hero `" + parts[1] + "`");
+                    }
+                }
+            } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("list")) {
+                continue;
+            } else {
+                System.out.println("Invalid command `" + input + "`");
+            }
+        }
         if (saveId > 0 && saveId - 1 < saves.length) {
             Save save = saves[saveId - 1];
             if (save.isCorrupted()) {
@@ -144,8 +146,37 @@ public class SaveController extends Controller {
     protected void heroCreation() {
         HeroCreation creationMenu = new HeroCreation();
         creationMenu.render();
-        // TODO ask for input / wait for input
-        // TODO create hero
-        // TODO redirect to Game Controller -> generate game and start (render map)
+
+        int createState = 0;
+        String name = null;
+        Hero hero = null;
+        while (createState < 2) {
+            String input;
+            switch (createState) {
+                case 0:
+                    input = Input.ask("> Name", null);
+                    if (input != null && input.length() > 0) {
+                        name = input;
+                        createState++;
+                    } else {
+                        System.out.println("You should enter a name for your hero");
+                    }
+                    break;
+                case 1:
+                    input = Input.ask("> Class (Magician, Paladin, Warrior)", null);
+                    hero = HeroFactory.newHero(input, name);
+                    if (hero != null) {
+                        createState++;
+                    } else {
+                        System.out.println("Invalid class");
+                    }
+                    break;
+            }
+        }
+        if (hero != null) {
+            Game game = new Game(hero, null, null, null);
+            swingy.setGame(game);
+            swingy.useGameController();
+        }
     }
 }
