@@ -103,6 +103,9 @@ public class SaveController extends Controller {
         int saveId = -1;
         while (saveId < 1) {
             String input = this.waitOrAskForInput("> [s]elect {number} [c]reate [l]ist");
+            if (handleGlobalCommand(input)) {
+                return;
+            }
             if (input.equalsIgnoreCase("c") || input.equalsIgnoreCase("create")) {
                 this.state = SaveState.CREATE;
                 break;
@@ -154,7 +157,7 @@ public class SaveController extends Controller {
             String input;
             switch (createState) {
                 case 0:
-                    input = Input.ask("> Name", null);
+                    input = Input.ask("> Name", "= ");
                     if (input != null && input.length() > 0) {
                         name = input;
                         createState++;
@@ -163,7 +166,7 @@ public class SaveController extends Controller {
                     }
                     break;
                 case 1:
-                    input = Input.ask("> Class (Magician, Paladin, Warrior)", null);
+                    input = Input.ask("> Class (Magician, Paladin, Warrior)", "= ");
                     hero = HeroFactory.newHero(input, name);
                     if (hero != null) {
                         hero.initializeCaracteristics();
