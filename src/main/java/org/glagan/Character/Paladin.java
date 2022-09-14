@@ -12,11 +12,11 @@ public class Paladin extends Hero {
     }
 
     public Caracteristics perLevel() {
-        return new Caracteristics(2, 4, 4);
+        return new Caracteristics(2, 4, 40);
     }
 
     public Caracteristics baseCaracteristics() {
-        return new Caracteristics(1, 4, 5);
+        return new Caracteristics(1, 4, 50);
     }
 
 }

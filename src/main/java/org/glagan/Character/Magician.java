@@ -12,10 +12,10 @@ public class Magician extends Hero {
     }
 
     public Caracteristics perLevel() {
-        return new Caracteristics(5, 2, 3);
+        return new Caracteristics(5, 2, 30);
     }
 
     public Caracteristics baseCaracteristics() {
-        return new Caracteristics(5, 2, 3);
+        return new Caracteristics(5, 2, 30);
     }
 }

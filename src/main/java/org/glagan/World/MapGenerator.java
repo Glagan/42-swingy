@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.glagan.Character.Enemy;
-import org.glagan.Character.EnemyRank;
-import org.glagan.Core.Caracteristics;
+import org.glagan.Character.EnemyGenerator;
 
 import jakarta.validation.constraints.Min;
 
 public class MapGenerator {
+    protected static Random rand = new Random();
     protected static MapGenerator generator = new MapGenerator();
 
     protected String[] namePrefixes = {
@@ -54,13 +54,12 @@ public class MapGenerator {
         Biome biome = Biome.values()[rand.nextInt(biomeLength)];
         Enemy[] enemies = enemyCount > 0 ? new Enemy[enemyCount] : null;
         for (int i = 0; i < enemyCount; i++) {
-            enemies[i] = new Enemy("Enemy", EnemyRank.SOLDIER, 1, new Caracteristics(10, 10, 10));
+            enemies[i] = EnemyGenerator.getGenerator().generate(level);
         }
         return new Location(x, y, biome, enemies, false, false);
     }
 
     public Map generate(@Min(1) int level) {
-        Random rand = new Random();
         String name = this.name();
         int size = (level - 1) * 5 + 10 - level;
         double enemyChance = Math.pow(level + 1, 0.9);
