@@ -1,4 +1,4 @@
-package org.glagan.World;
+package org.glagan.Core;
 
 public class Caracteristics {
     protected int attack;

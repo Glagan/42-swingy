@@ -3,7 +3,6 @@ package org.glagan.Controller;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.glagan.Core.Game;
@@ -11,7 +10,6 @@ import org.glagan.Core.Input;
 import org.glagan.Core.Save;
 import org.glagan.Display.Display;
 import org.glagan.Display.Mode;
-// import org.glagan.Core.Save;
 import org.glagan.View.HeroCreation;
 import org.glagan.View.SaveIndex;
 
@@ -22,14 +20,14 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
-enum State {
+enum SaveState {
     LIST,
     CREATE
 }
 
 public class SaveController extends Controller {
-    protected State state;
-    protected Integer selected;
+    protected SaveState state;
+    protected int selected;
 
     public SaveController(org.glagan.Core.Swingy swingy) {
         super(swingy);
@@ -43,7 +41,7 @@ public class SaveController extends Controller {
         }
 
         Save[] saves = new Save[files.length];
-        Integer index = 0;
+        int index = 0;
         for (String path : files) {
             try {
                 Reader reader = new FileReader(path);
@@ -73,20 +71,20 @@ public class SaveController extends Controller {
 
     @Override
     public void reset() {
-        this.state = State.LIST;
+        this.state = SaveState.LIST;
         this.selected = -1;
     }
 
     @Override
     public void run() {
-        if (this.state.equals(State.LIST)) {
+        if (this.state.equals(SaveState.LIST)) {
             this.saveIndex();
         } else {
             this.heroCreation();
         }
     }
 
-    protected Integer waitOrAskForInput() {
+    protected int waitOrAskForInput() {
         if (Display.getDisplay().equals(Mode.CONSOLE)) {
             while (true) {
                 String input = Input.ask("> [s]elect {number} [c]reate [l]ist", null);
@@ -94,7 +92,7 @@ public class SaveController extends Controller {
                     return -1;
                 }
                 if (input.equalsIgnoreCase("c") || input.equalsIgnoreCase("create")) {
-                    this.state = State.CREATE;
+                    this.state = SaveState.CREATE;
                     break;
                 } else if (input.startsWith("s ") || input.startsWith("select ")) {
                     String[] parts = input.split(" ");
@@ -102,7 +100,7 @@ public class SaveController extends Controller {
                         System.out.println("Invalid command `" + input + "`");
                     } else {
                         try {
-                            Integer id = Integer.parseInt(parts[1]);
+                            int id = Integer.parseInt(parts[1]);
                             if (id <= 0) {
                                 System.out.println("Invalid selected hero `" + id + "`");
                             } else {
@@ -128,7 +126,7 @@ public class SaveController extends Controller {
         Save[] saves = this.getSaves();
         SaveIndex saveIndex = new SaveIndex(saves);
         saveIndex.render();
-        Integer saveId = this.waitOrAskForInput();
+        int saveId = this.waitOrAskForInput();
         if (saveId > 0 && saveId - 1 < saves.length) {
             Save save = saves[saveId - 1];
             if (save.isCorrupted()) {

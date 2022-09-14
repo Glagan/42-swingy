@@ -2,7 +2,7 @@ package org.glagan.Character;
 
 import org.glagan.Artefact.Artefact;
 import org.glagan.Artefact.ArtefactSlot;
-import org.glagan.World.Caracteristics;
+import org.glagan.Core.Caracteristics;
 import org.glagan.World.Coordinates;
 
 import com.google.gson.Gson;

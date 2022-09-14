@@ -7,6 +7,7 @@ import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
 import org.glagan.World.Map;
+import org.glagan.World.MapGenerator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -23,7 +24,6 @@ public class Game {
     @Valid
     protected Hero hero;
 
-    @NotNull
     @Valid
     protected Map map;
 
@@ -74,6 +74,13 @@ public class Game {
 
     public void setCurrentEnemy(Enemy currentEnemy) {
         this.currentEnemy = currentEnemy;
+    }
+
+    public void generateNewMap() {
+        // Cleanup previous enemyDrop and currentEnemy if they were modified in the save
+        this.enemyDrop = null;
+        this.currentEnemy = null;
+        this.map = MapGenerator.getGenerator().generate(hero.getLevel());
     }
 
     public String serialize() {

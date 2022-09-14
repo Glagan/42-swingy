@@ -1,6 +1,6 @@
 package org.glagan.Character;
 
-import org.glagan.World.Caracteristics;
+import org.glagan.Core.Caracteristics;
 
 public class Magician extends Hero {
     public Magician(String name) {

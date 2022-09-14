@@ -1,7 +1,5 @@
 package org.glagan.World;
 
-import java.util.List;
-
 import org.glagan.Character.Enemy;
 
 import jakarta.validation.constraints.Min;
@@ -19,11 +17,22 @@ public class Location {
     @NotNull
     protected Biome biome;
 
-    protected List<Enemy> enemies;
+    protected Enemy[] enemies;
 
     @NotNull
     protected boolean enemiesAreVisible;
 
     @NotNull
     protected boolean isVisible;
+
+    public Location(@NotNull @Min(0) int x, @NotNull @Min(0) int y, @NotNull Biome biome, Enemy[] enemies,
+            @NotNull boolean enemiesAreVisible, @NotNull boolean isVisible) {
+        this.x = x;
+        this.y = y;
+        this.biome = biome;
+        this.enemies = enemies;
+        this.enemiesAreVisible = enemiesAreVisible;
+        this.isVisible = isVisible;
+    }
+
 }
