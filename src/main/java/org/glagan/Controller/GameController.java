@@ -28,6 +28,7 @@ public class GameController extends Controller {
         Game game = swingy.getGame();
         if (game.getMap() == null) {
             game.generateNewMap();
+            game.save();
             System.out.println(GsonCustomBuilder.getBuilder().create().toJson(game.getMap()));
         }
     }

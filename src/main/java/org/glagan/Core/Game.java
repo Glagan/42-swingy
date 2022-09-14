@@ -1,6 +1,11 @@
 package org.glagan.Core;
 
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Random;
 
 import org.glagan.Adapters.GsonCustomBuilder;
 import org.glagan.Artefact.Artefact;
@@ -38,6 +43,17 @@ public class Game {
         this.map = map;
         this.enemyDrop = enemyDrop;
         this.currentEnemy = currentEnemy;
+    }
+
+    public void generateSavePath() {
+        Random rand = new Random();
+        String name = this.hero.getName() + "_" + this.hero.className();
+        Path path = Paths.get("saves/" + name + ".json");
+        while (Files.exists(path)) {
+            name = name + "_" + rand.nextInt(1000);
+            path = Paths.get("saves/" + name + ".json");
+        }
+        this.savePath = path.toString();
     }
 
     public void setSavePath(String path) {
@@ -91,5 +107,18 @@ public class Game {
     static public Game deserialize(Reader reader) throws JsonSyntaxException, JsonIOException {
         Gson gson = GsonCustomBuilder.getBuilder().create();
         return gson.fromJson(reader, Game.class);
+    }
+
+    public void save() {
+        if (savePath != null) {
+            String content = this.serialize();
+            try {
+                Files.write(Paths.get(savePath), content.getBytes());
+            } catch (IOException e) {
+                System.out.println("Failed to save game: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Failed to save game, no save path was generated");
+        }
     }
 }

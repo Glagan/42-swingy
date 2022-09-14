@@ -175,6 +175,8 @@ public class SaveController extends Controller {
         }
         if (hero != null) {
             Game game = new Game(hero, null, null, null);
+            game.generateSavePath();
+            game.save();
             swingy.setGame(game);
             swingy.useGameController();
         }
