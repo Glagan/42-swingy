@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 public class Game {
@@ -19,13 +20,17 @@ public class Game {
     protected String savePath;
 
     @NotNull
+    @Valid
     protected Hero hero;
 
     @NotNull
+    @Valid
     protected Map map;
 
+    @Valid
     protected Artefact enemyDrop;
 
+    @Valid
     protected Enemy currentEnemy;
 
     public Game(Hero hero, Map map, Artefact enemyDrop, Enemy currentEnemy) {
@@ -33,6 +38,10 @@ public class Game {
         this.map = map;
         this.enemyDrop = enemyDrop;
         this.currentEnemy = currentEnemy;
+    }
+
+    public void setSavePath(String path) {
+        this.savePath = path;
     }
 
     public Hero getHero() {

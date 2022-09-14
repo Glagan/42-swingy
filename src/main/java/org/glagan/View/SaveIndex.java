@@ -22,7 +22,7 @@ public class SaveIndex extends View {
                 Save save = saves[i];
                 System.out.print(i + 1 + "\t");
                 if (save.isCorrupted()) {
-                    System.out.print("Corrupted (" + save.getError() + ")");
+                    System.out.print(save.getPath() + ", Corrupted: " + save.getError());
                 } else {
                     Hero hero = save.getGame().getHero();
                     System.out.print(

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
@@ -16,6 +17,10 @@ import org.glagan.View.SaveIndex;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 
 enum State {
     LIST,
@@ -43,15 +48,21 @@ public class SaveController extends Controller {
             try {
                 Reader reader = new FileReader(path);
                 Game game = Game.deserialize(reader);
-                saves[index] = new Save(path, game, false, null);
-                // TODO validate valid json save values
+                game.setSavePath(path);
+                Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+                Set<ConstraintViolation<Game>> constraintViolations = validator.validate(game);
+                if (constraintViolations.size() > 0) {
+                    ConstraintViolation<Game> nextError = constraintViolations.iterator().next();
+                    saves[index] = new Save(path, game, true,
+                            "Validation failed: " + nextError.getPropertyPath() + " " + nextError.getMessage());
+                } else {
+                    saves[index] = new Save(path, game, false, null);
+                }
             } catch (FileNotFoundException e) {
                 saves[index] = new Save(path, null, true, "File not found");
             } catch (JsonSyntaxException e) {
                 saves[index] = new Save(path, null, true, "Invalid syntax in save file: " + e.getMessage());
             } catch (JsonIOException e) {
-                saves[index] = new Save(path, null, true, "Failed to read file: " + e.getMessage());
-            } catch (Exception e) {
                 saves[index] = new Save(path, null, true, "Failed to read file: " + e.getMessage());
             }
             index += 1;
@@ -75,18 +86,34 @@ public class SaveController extends Controller {
         }
     }
 
-    protected boolean waitOrAskForInput() {
+    protected Integer waitOrAskForInput() {
         if (Display.getDisplay().equals(Mode.CONSOLE)) {
             while (true) {
-                String input = Input.ask("> [s]elect {number} [c]reate", null);
+                String input = Input.ask("> [s]elect {number} [c]reate [l]ist", null);
                 if (input == null) {
-                    return false;
+                    return -1;
                 }
                 if (input.equalsIgnoreCase("c") || input.equalsIgnoreCase("create")) {
                     this.state = State.CREATE;
                     break;
                 } else if (input.startsWith("s ") || input.startsWith("select ")) {
-                    // TODO parse index and select
+                    String[] parts = input.split(" ");
+                    if (parts.length != 2) {
+                        System.out.println("Invalid command `" + input + "`");
+                    } else {
+                        try {
+                            Integer id = Integer.parseInt(parts[1]);
+                            if (id <= 0) {
+                                System.out.println("Invalid selected hero `" + id + "`");
+                            } else {
+                                return id;
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid selected hero `" + parts[1] + "`");
+                        }
+                    }
+                } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("list")) {
+                    continue;
                 } else {
                     System.out.println("Invalid command `" + input + "`");
                 }
@@ -94,19 +121,26 @@ public class SaveController extends Controller {
         } else {
             // TODO wait for a variable to change inside a view
         }
-        return true;
+        return -1;
     }
 
     protected void saveIndex() {
         Save[] saves = this.getSaves();
         SaveIndex saveIndex = new SaveIndex(saves);
         saveIndex.render();
-        if (!this.waitOrAskForInput()) {
-            return;
+        Integer saveId = this.waitOrAskForInput();
+        if (saveId > 0 && saveId - 1 < saves.length) {
+            Save save = saves[saveId - 1];
+            if (save.isCorrupted()) {
+                System.out.println("The selected save is corrupted and can't be played");
+            } else {
+                System.out.println("Selected game " + save.getGame());
+                swingy.setGame(save.getGame());
+                swingy.useGameController();
+            }
+        } else {
+            System.out.println("The selected save doesn't exists");
         }
-        // TODO waitOrAskForInput: ask for input / wait for input
-        // TODO set state to State.CREATE on `create`
-        // TODO redirect to Game Controller -> generate game and start (render map)
     }
 
     protected void heroCreation() {

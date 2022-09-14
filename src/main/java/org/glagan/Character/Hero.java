@@ -35,7 +35,6 @@ public abstract class Hero {
 
     protected Artefact helm;
 
-    @NotNull
     protected Coordinates position;
 
     protected Hero(String name) {

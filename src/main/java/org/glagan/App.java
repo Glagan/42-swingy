@@ -1,5 +1,7 @@
 package org.glagan;
 
+import java.util.logging.Level;
+
 // import org.glagan.Character.Warrior;
 // import org.glagan.Core.Game;
 import org.glagan.Core.Save;
@@ -32,6 +34,7 @@ public class App {
             return;
         }
 
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
         Swingy swingy = new Swingy();
         swingy.run();
     }
