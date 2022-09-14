@@ -11,11 +11,11 @@ public class Warrior extends Hero {
         return "Warrior";
     }
 
-    public Caracteristics perLevel() {
+    public Caracteristics getCaracteristicsPerLevel() {
         return new Caracteristics(3, 3, 40);
     }
 
-    public Caracteristics baseCaracteristics() {
+    public Caracteristics getBaseCaracteristics() {
         return new Caracteristics(3, 4, 30);
     }
 }

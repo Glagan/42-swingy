@@ -11,11 +11,11 @@ public class Magician extends Hero {
         return "Magician";
     }
 
-    public Caracteristics perLevel() {
+    public Caracteristics getCaracteristicsPerLevel() {
         return new Caracteristics(5, 2, 30);
     }
 
-    public Caracteristics baseCaracteristics() {
+    public Caracteristics getBaseCaracteristics() {
         return new Caracteristics(5, 2, 30);
     }
 }

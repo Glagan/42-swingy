@@ -45,9 +45,9 @@ public abstract class Hero {
 
     abstract public String className();
 
-    abstract public Caracteristics perLevel();
+    abstract public Caracteristics getCaracteristicsPerLevel();
 
-    abstract public Caracteristics baseCaracteristics();
+    abstract public Caracteristics getBaseCaracteristics();
 
     public boolean equipArtefact(Artefact artefact, ArtefactSlot slot) {
         if (artefact.getSlot().equals(slot)) {
@@ -95,6 +95,30 @@ public abstract class Hero {
 
     public long getExperience() {
         return experience;
+    }
+
+    /**
+     * Solve equation x = (y * 1000) + (y - 1)^2 * 450 for variable y (level) to
+     * extract the level from the experience amount
+     * https://www.wolframalpha.com/widgets/view.jsp?id=c778a2d8bf30ef1d3c2d6bc5696defad
+     */
+    public void initializeCaracteristics() {
+        level = Math.max((int) Math.floor((1 / 90) * (Math.sqrt(18 * experience - 8000) - 10)), 1);
+        baseCaracteristics = getBaseCaracteristics();
+        Caracteristics perLevel = getCaracteristicsPerLevel();
+        finalCaracteristics = new Caracteristics(
+                baseCaracteristics.getAttack() + (perLevel.getAttack() * (level - 1)),
+                baseCaracteristics.getDefense() + (perLevel.getDefense() * (level - 1)),
+                baseCaracteristics.getHitPoints() + (perLevel.getHitPoints() * (level - 1)));
+        if (weapon != null) {
+            finalCaracteristics.add(weapon.getBonuses());
+        }
+        if (armor != null) {
+            finalCaracteristics.add(armor.getBonuses());
+        }
+        if (helm != null) {
+            finalCaracteristics.add(helm.getBonuses());
+        }
     }
 
     public JsonElement serialize() {

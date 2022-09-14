@@ -11,11 +11,11 @@ public class Paladin extends Hero {
         return "Paladin";
     }
 
-    public Caracteristics perLevel() {
+    public Caracteristics getCaracteristicsPerLevel() {
         return new Caracteristics(2, 4, 40);
     }
 
-    public Caracteristics baseCaracteristics() {
+    public Caracteristics getBaseCaracteristics() {
         return new Caracteristics(1, 4, 50);
     }
 

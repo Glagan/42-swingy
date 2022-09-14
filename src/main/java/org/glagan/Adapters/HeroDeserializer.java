@@ -22,7 +22,11 @@ public class HeroDeserializer implements JsonDeserializer<Hero> {
                 Class<?> heroClass = HeroFactory.classFromString(type);
                 if (heroClass != null) {
                     json.getAsJsonObject().remove("type");
-                    return (Hero) new Gson().fromJson(json, heroClass);
+                    Hero hero = (Hero) new Gson().fromJson(json, heroClass);
+                    if (hero != null) {
+                        hero.initializeCaracteristics();
+                    }
+                    return hero;
                 }
             }
         }
