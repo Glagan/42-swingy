@@ -78,6 +78,48 @@ public class Game {
         this.map = map;
     }
 
+    public void updateVisibility() {
+        // Set locations global visibility
+        Coordinates heroPosition = hero.getPosition();
+        int size = map.getSize();
+        int xUp = Math.max(0, heroPosition.getX() - 2);
+        int xDown = Math.min(size, heroPosition.getX() + 2);
+        int yUp = Math.max(0, heroPosition.getY() - 2);
+        int yDown = Math.min(size, heroPosition.getY() + 2);
+        for (; xUp < xDown; xUp++) {
+            for (int y = yUp; y < yDown; y++) {
+                map.setPositionVisible(xUp, y);
+            }
+        }
+
+        int x = heroPosition.getX();
+        int y = heroPosition.getY();
+        if (x > 0) {
+            if (y > 0) {
+                map.setEnemiesVisible(x - 1, y - 1);
+            }
+            map.setEnemiesVisible(x - 1, y);
+            if (y < size - 1) {
+                map.setEnemiesVisible(x - 1, y + 1);
+            }
+        }
+        if (y > 0) {
+            map.setEnemiesVisible(x, y - 1);
+        }
+        if (y < size - 1) {
+            map.setEnemiesVisible(x, y + 1);
+        }
+        if (x < size - 1) {
+            if (y > 0) {
+                map.setEnemiesVisible(x + 1, y - 1);
+            }
+            map.setEnemiesVisible(x + 1, y);
+            if (y < size - 1) {
+                map.setEnemiesVisible(x + 1, y + 1);
+            }
+        }
+    }
+
     public void moveHero(Direction direction) {
         Coordinates heroPosition = hero.getPosition();
         switch (direction) {
@@ -102,6 +144,7 @@ public class Game {
                 }
                 break;
         }
+        updateVisibility();
         save();
     }
 

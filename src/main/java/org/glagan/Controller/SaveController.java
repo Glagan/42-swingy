@@ -137,7 +137,7 @@ public class SaveController extends Controller {
             if (save.isCorrupted()) {
                 System.out.println("The selected save is corrupted and can't be played");
             } else {
-                System.out.println("Selected game " + save.getGame());
+                System.out.println("Playing as " + save.getGame().getHero().getName());
                 swingy.setGame(save.getGame());
                 swingy.useGameController();
             }

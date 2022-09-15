@@ -30,4 +30,12 @@ public class Map {
     public int getSize() {
         return size;
     }
+
+    public void setPositionVisible(int x, int y) {
+        locations[x][y].setVisibility(true);
+    }
+
+    public void setEnemiesVisible(int x, int y) {
+        locations[x][y].setEnemiesVisibility(true);
+    }
 }

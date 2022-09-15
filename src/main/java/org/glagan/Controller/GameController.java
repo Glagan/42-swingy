@@ -42,6 +42,7 @@ public class GameController extends Controller {
             game.generateNewMap();
             int center = game.getMap().getSize() / 2;
             game.getHero().setPosition(new Coordinates(center, center));
+            game.updateVisibility();
             game.save();
             System.out.println(GsonCustomBuilder.getBuilder().create().toJson(game.getMap()));
             state = GameState.MAP;
@@ -78,7 +79,7 @@ public class GameController extends Controller {
         Map map = new Map(game.getMap(), hero);
         map.render();
         while (true) {
-            String input = this.waitOrAskForInput("> [s]how [i]nventory [m]ove {north|east|south|west}");
+            String input = this.waitOrAskForInput("> [s]how [i]nventory [m]ove {[n]orth|[e]ast|[s]outh|[w]est}");
             if (handleGlobalCommand(input)) {
                 return;
             }

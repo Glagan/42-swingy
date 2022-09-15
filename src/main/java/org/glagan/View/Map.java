@@ -4,6 +4,8 @@ import org.glagan.Character.Hero;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Location;
 
+import com.github.tomaslanger.chalk.Chalk;
+
 public class Map extends View {
     protected org.glagan.World.Map map;
     protected Hero hero;
@@ -24,17 +26,42 @@ public class Map extends View {
         Location[][] locations = map.getLocations();
         Coordinates heroPosition = hero.getPosition();
         int size = map.getSize();
+
+        System.out.println();
+        System.out.print("┌");
+        for (int i = 0; i < size; i++) {
+            System.out.print("─");
+        }
+        System.out.println("┐");
+
         for (int x = 0; x < size; x++) {
+            System.out.print("│");
             for (int y = 0; y < size; y++) {
-                if (x == heroPosition.getX() && y == heroPosition.getY()) {
-                    System.out.print("P");
-                } else if (locations[x][y].hasEnemies()) {
-                    System.out.print("E");
+                Boolean hasPlayer = x == heroPosition.getX() && y == heroPosition.getY();
+                Location location = locations[x][y];
+                if (location.isVisible()) {
+                    String text = " ";
+                    if (hasPlayer) {
+                        text = "P";
+                    } else if (location.isEnemiesAreVisible() && location.hasEnemies()) {
+                        text = "•";
+                    }
+                    Chalk out = location.getChalk(text);
+                    if (hasPlayer) {
+                        out.bold();
+                    }
+                    System.out.print(out);
                 } else {
                     System.out.print(" ");
                 }
             }
-            System.out.println();
+            System.out.println("│");
         }
+
+        System.out.print("└");
+        for (int i = 0; i < size; i++) {
+            System.out.print("─");
+        }
+        System.out.println("┘");
     }
 }

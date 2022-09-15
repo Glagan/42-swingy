@@ -2,6 +2,8 @@ package org.glagan.World;
 
 import org.glagan.Character.Enemy;
 
+import com.github.tomaslanger.chalk.Chalk;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -47,6 +49,10 @@ public class Location {
         return biome;
     }
 
+    public Chalk getChalk(String text) {
+        return Biome.printText(biome, text);
+    }
+
     public Enemy[] getEnemies() {
         return enemies;
     }
@@ -61,5 +67,13 @@ public class Location {
 
     public boolean isVisible() {
         return isVisible;
+    }
+
+    public void setVisibility(boolean visible) {
+        isVisible = visible;
+    }
+
+    public void setEnemiesVisibility(boolean visible) {
+        enemiesAreVisible = visible;
     }
 }
