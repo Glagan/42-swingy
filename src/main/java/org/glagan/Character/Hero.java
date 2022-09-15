@@ -4,6 +4,7 @@ import org.glagan.Artefact.Artefact;
 import org.glagan.Artefact.ArtefactSlot;
 import org.glagan.Core.Caracteristics;
 import org.glagan.World.Coordinates;
+import org.glagan.World.Direction;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -95,6 +96,31 @@ public abstract class Hero {
 
     public long getExperience() {
         return experience;
+    }
+
+    public Coordinates getPosition() {
+        return position;
+    }
+
+    public void setPosition(Coordinates coordinates) {
+        position = coordinates;
+    }
+
+    public void move(Direction direction) {
+        switch (direction) {
+            case NORTH:
+                position.addX(-1);
+                break;
+            case EAST:
+                position.addY(1);
+                break;
+            case SOUTH:
+                position.addX(1);
+                break;
+            case WEST:
+                position.addY(-1);
+                break;
+        }
     }
 
     /**

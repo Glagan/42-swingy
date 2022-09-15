@@ -11,6 +11,8 @@ import org.glagan.Adapters.GsonCustomBuilder;
 import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
+import org.glagan.World.Coordinates;
+import org.glagan.World.Direction;
 import org.glagan.World.Map;
 import org.glagan.World.MapGenerator;
 
@@ -74,6 +76,33 @@ public class Game {
 
     public void setMap(Map map) {
         this.map = map;
+    }
+
+    public void moveHero(Direction direction) {
+        Coordinates heroPosition = hero.getPosition();
+        switch (direction) {
+            case NORTH:
+                if (heroPosition.getX() > 0) {
+                    hero.move(direction);
+                }
+                break;
+            case EAST:
+                if (heroPosition.getY() < map.getSize() - 1) {
+                    hero.move(direction);
+                }
+                break;
+            case SOUTH:
+                if (heroPosition.getX() < map.getSize() - 1) {
+                    hero.move(direction);
+                }
+                break;
+            case WEST:
+                if (heroPosition.getY() > 0) {
+                    hero.move(direction);
+                }
+                break;
+        }
+        save();
     }
 
     public Artefact getEnemyDrop() {

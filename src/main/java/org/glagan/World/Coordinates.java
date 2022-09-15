@@ -18,6 +18,10 @@ public class Coordinates {
         this.x = x;
     }
 
+    public void addX(int x) {
+        this.x += x;
+    }
+
     public int getY() {
         return y;
     }
@@ -26,4 +30,7 @@ public class Coordinates {
         this.y = y;
     }
 
+    public void addY(int y) {
+        this.y += y;
+    }
 }

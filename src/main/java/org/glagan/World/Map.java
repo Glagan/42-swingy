@@ -1,7 +1,5 @@
 package org.glagan.World;
 
-import java.util.List;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,12 +14,20 @@ public class Map {
     protected int size;
 
     @NotNull
-    protected List<List<Location>> locations;
+    protected Location[][] locations;
 
-    public Map(String name, int level, int size, List<List<Location>> locations) {
+    public Map(String name, int level, int size, Location[][] locations) {
         this.name = name;
         this.level = level;
         this.size = size;
         this.locations = locations;
+    }
+
+    public Location[][] getLocations() {
+        return locations;
+    }
+
+    public int getSize() {
+        return size;
     }
 }

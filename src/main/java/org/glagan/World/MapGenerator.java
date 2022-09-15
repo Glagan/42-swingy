@@ -1,7 +1,5 @@
 package org.glagan.World;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import org.glagan.Character.Enemy;
@@ -65,10 +63,8 @@ public class MapGenerator {
         double enemyChance = Math.pow(level + 1, 0.9);
         int maxEnemyCount = Math.floorDiv(level, 10) + 1;
         int roundsSinceLastGeneration = 2;
-        List<List<Location>> locations = new ArrayList<>();
+        Location[][] locations = new Location[size][size];
         for (int x = 0; x < size; x++) {
-            List<Location> row = new ArrayList<>();
-            locations.add(row);
             for (int y = 0; y < size; y++) {
                 double locationEnemyChance = enemyChance + (roundsSinceLastGeneration * 10);
                 boolean hasEnemy = (rand.nextDouble() * 100) <= locationEnemyChance;
@@ -84,7 +80,7 @@ public class MapGenerator {
                 } else {
                     roundsSinceLastGeneration++;
                 }
-                row.add(this.location(level, x, y, enemyCount));
+                locations[x][y] = this.location(level, x, y, enemyCount);
             }
         }
         return new Map(name, level, size, locations);

@@ -35,4 +35,31 @@ public class Location {
         this.isVisible = isVisible;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Biome getBiome() {
+        return biome;
+    }
+
+    public Enemy[] getEnemies() {
+        return enemies;
+    }
+
+    public boolean hasEnemies() {
+        return enemies != null && enemies.length > 0;
+    }
+
+    public boolean isEnemiesAreVisible() {
+        return enemiesAreVisible;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
 }
