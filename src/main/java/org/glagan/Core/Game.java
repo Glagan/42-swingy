@@ -148,6 +148,12 @@ public class Game {
         save();
     }
 
+    public void removeEnemiesAfterFight() {
+        Coordinates position = hero.getPosition();
+        map.removeEnemies(position.getX(), position.getY());
+        save();
+    }
+
     public Artefact getEnemyDrop() {
         return enemyDrop;
     }

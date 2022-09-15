@@ -1,11 +1,12 @@
 package org.glagan.Controller;
 
-import org.glagan.Adapters.GsonCustomBuilder;
+import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Hero;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
 import org.glagan.Display.Display;
 import org.glagan.Display.Mode;
+import org.glagan.View.ArtefactDrop;
 import org.glagan.View.Inventory;
 import org.glagan.View.Map;
 import org.glagan.World.Coordinates;
@@ -46,7 +47,6 @@ public class GameController extends Controller {
             game.getHero().setPosition(new Coordinates(center, center));
             game.updateVisibility();
             game.save();
-            System.out.println(GsonCustomBuilder.getBuilder().create().toJson(game.getMap()));
             state = GameState.MAP;
         }
         // If there is a fight in progress go to the fight controller instead
@@ -61,7 +61,7 @@ public class GameController extends Controller {
         if (this.state.equals(GameState.MAP)) {
             this.map();
         } else {
-            this.drop();
+            this.artefactDrop();
         }
     }
 
@@ -128,8 +128,27 @@ public class GameController extends Controller {
         }
     }
 
-    protected void drop() {
+    protected void artefactDrop() {
         Game game = swingy.getGame();
-        System.out.println("drop: " + game.getEnemyDrop());
+        Artefact artefact = game.getEnemyDrop();
+        new ArtefactDrop(game.getHero(), game.getEnemyDrop()).render();
+
+        while (true) {
+            String input = this.waitOrAskForInput("> [e]quip [l]eave", null);
+            if (handleGlobalCommand(input)) {
+                return;
+            }
+            if (input.equalsIgnoreCase("e") || input.equalsIgnoreCase("equip")) {
+                game.getHero().equipArtefact(artefact);
+                game.setEnemyDrop(null);
+                game.save();
+            } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("leave")) {
+                game.setEnemyDrop(null);
+                game.save();
+                return;
+            } else {
+                System.out.println("Invalid command `" + input + "`");
+            }
+        }
     }
 }

@@ -59,6 +59,10 @@ public class Location {
         return enemies;
     }
 
+    public void setEnemies(Enemy[] enemies) {
+        this.enemies = enemies;
+    }
+
     public boolean hasEnemies() {
         return enemies != null && enemies.length > 0;
     }

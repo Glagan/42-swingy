@@ -28,4 +28,20 @@ public class Enemy {
         this.level = level;
         this.caracteristics = caracteristics;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public EnemyRank getRank() {
+        return rank;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public Caracteristics getCaracteristics() {
+        return caracteristics;
+    }
 }

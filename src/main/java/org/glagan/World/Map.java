@@ -53,6 +53,10 @@ public class Map {
         return true;
     }
 
+    public void removeEnemies(int x, int y) {
+        locations[x][y].setEnemies(null);
+    }
+
     public void setPositionVisible(int x, int y) {
         locations[x][y].setVisibility(true);
     }

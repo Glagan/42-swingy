@@ -3,6 +3,7 @@ package org.glagan.Controller;
 import org.glagan.Core.Swingy;
 import org.glagan.Display.Display;
 import org.glagan.Display.Mode;
+import org.glagan.View.Help;
 
 abstract public class Controller {
     protected Swingy swingy;
@@ -13,14 +14,7 @@ abstract public class Controller {
 
     protected boolean handleGlobalCommand(String input) {
         if (input.equalsIgnoreCase("h") || input.equalsIgnoreCase("help")) {
-            System.out.println("\n----");
-            System.out.println("Help:");
-            System.out.println("Global commands");
-            System.out.println("`help`: display this help");
-            System.out.println("`set-display {console,gui}`: change the game display            mode");
-            System.out.println("`quit`: quit the game");
-            System.out.println("`home`: go to the home screen");
-            System.out.println("----");
+            new Help().render();
             return true;
         } else if (input.equalsIgnoreCase("home")) {
             swingy.useSaveController();

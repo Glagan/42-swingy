@@ -20,7 +20,7 @@ public enum Biome {
     public static Chalk printText(Biome biome, String text) {
         switch (biome) {
             case PLAIN:
-                return Chalk.on(text).green();
+                return Chalk.on(text).green().bgWhite();
             case FOREST:
                 return Chalk.on(text).black().bgGreen();
             case JUNGLE:

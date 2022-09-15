@@ -100,8 +100,7 @@ public class SaveController extends Controller {
 
     protected void saveIndex() {
         Save[] saves = this.getSaves();
-        SaveIndex saveIndex = new SaveIndex(saves);
-        saveIndex.render();
+        new SaveIndex(saves).render();
         int saveId = -1;
         while (saveId < 1) {
             String input = this.waitOrAskForInput("> [s]elect {number} [c]reate [l]ist [d]elete {number}");
@@ -170,8 +169,7 @@ public class SaveController extends Controller {
     }
 
     protected void heroCreation() {
-        HeroCreation creationMenu = new HeroCreation();
-        creationMenu.render();
+        new HeroCreation().render();
 
         int createState = 0;
         String name = null;

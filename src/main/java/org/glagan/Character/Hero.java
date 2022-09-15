@@ -59,22 +59,30 @@ public abstract class Hero {
 
     abstract public Caracteristics getBaseCaracteristics();
 
-    public boolean equipArtefact(Artefact artefact, ArtefactSlot slot) {
-        if (artefact.getSlot().equals(slot)) {
-            switch (slot) {
-                case HELM:
-                    this.helm = artefact;
-                    break;
-                case ARMOR:
-                    this.armor = artefact;
-                    break;
-                case WEAPON:
-                    this.weapon = artefact;
-                    break;
-            }
-            return true;
+    public Artefact getArtefactInSlot(ArtefactSlot slot) {
+        switch (slot) {
+            case HELM:
+                return this.helm;
+            case ARMOR:
+                return armor;
+            case WEAPON:
+                return weapon;
         }
-        return false;
+        return null;
+    }
+
+    public void equipArtefact(Artefact artefact) {
+        switch (artefact.getSlot()) {
+            case HELM:
+                this.helm = artefact;
+                break;
+            case ARMOR:
+                this.armor = artefact;
+                break;
+            case WEAPON:
+                this.weapon = artefact;
+                break;
+        }
     }
 
     public void removeArtefact(ArtefactSlot slot) {

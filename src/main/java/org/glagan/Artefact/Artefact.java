@@ -19,6 +19,14 @@ public class Artefact {
     @NotNull
     protected ArtefactSlot slot;
 
+    public Artefact(@NotNull String name, @NotNull Rarity rarity, @NotNull @Valid Caracteristics bonuses,
+            @NotNull ArtefactSlot slot) {
+        this.name = name;
+        this.rarity = rarity;
+        this.bonuses = bonuses;
+        this.slot = slot;
+    }
+
     public String getName() {
         return name;
     }
