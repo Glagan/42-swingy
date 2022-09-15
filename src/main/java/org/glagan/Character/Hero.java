@@ -10,6 +10,7 @@ import org.glagan.World.Direction;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -31,15 +32,19 @@ public abstract class Hero {
     @NotNull
     protected Caracteristics finalCaracteristics;
 
+    @Valid
     @CheckSlot(ArtefactSlot.WEAPON)
     protected Artefact weapon;
 
+    @Valid
     @CheckSlot(ArtefactSlot.ARMOR)
     protected Artefact armor;
 
+    @Valid
     @CheckSlot(ArtefactSlot.HELM)
     protected Artefact helm;
 
+    @Valid
     protected Coordinates position;
 
     protected Hero(String name) {

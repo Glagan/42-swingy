@@ -55,6 +55,8 @@ public class SaveController extends Controller {
                     ConstraintViolation<Game> nextError = constraintViolations.iterator().next();
                     saves[index] = new Save(path, game, true,
                             "Validation failed: " + nextError.getPropertyPath() + " " + nextError.getMessage());
+                } else if (game.getMap() != null && !game.getMap().validateLocations()) {
+                    saves[index] = new Save(path, game, true, "The map doesn't have valid locations for it's size");
                 } else {
                     saves[index] = new Save(path, game, false, null);
                 }

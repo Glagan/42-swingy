@@ -2,6 +2,7 @@ package org.glagan.Character;
 
 import org.glagan.Core.Caracteristics;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,6 +18,7 @@ public class Enemy {
     protected int level;
 
     @NotNull
+    @Valid
     protected Caracteristics caracteristics;
 
     public Enemy(@NotNull String name, @NotNull EnemyRank rank, @NotNull @Min(1) int level,

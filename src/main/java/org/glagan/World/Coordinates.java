@@ -1,8 +1,12 @@
 package org.glagan.World;
 
+import jakarta.validation.constraints.Min;
+
 public class Coordinates {
+    @Min(0)
     protected int x;
 
+    @Min(0)
     protected int y;
 
     public Coordinates(int x, int y) {

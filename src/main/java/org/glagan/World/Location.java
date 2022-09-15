@@ -4,6 +4,7 @@ import org.glagan.Character.Enemy;
 
 import com.github.tomaslanger.chalk.Chalk;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,6 +20,7 @@ public class Location {
     @NotNull
     protected Biome biome;
 
+    @Valid
     protected Enemy[] enemies;
 
     @NotNull

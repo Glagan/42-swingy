@@ -2,6 +2,7 @@ package org.glagan.Artefact;
 
 import org.glagan.Core.Caracteristics;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 public class Artefact {
@@ -12,6 +13,7 @@ public class Artefact {
     protected Rarity rarity;
 
     @NotNull
+    @Valid
     protected Caracteristics bonuses;
 
     @NotNull
