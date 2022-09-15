@@ -2,6 +2,7 @@ package org.glagan.Character;
 
 import org.glagan.Artefact.Artefact;
 import org.glagan.Artefact.ArtefactSlot;
+import org.glagan.Artefact.Validator.CheckSlot;
 import org.glagan.Core.Caracteristics;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Direction;
@@ -30,10 +31,13 @@ public abstract class Hero {
     @NotNull
     protected Caracteristics finalCaracteristics;
 
+    @CheckSlot(ArtefactSlot.WEAPON)
     protected Artefact weapon;
 
+    @CheckSlot(ArtefactSlot.ARMOR)
     protected Artefact armor;
 
+    @CheckSlot(ArtefactSlot.HELM)
     protected Artefact helm;
 
     protected Coordinates position;
