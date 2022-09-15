@@ -102,7 +102,7 @@ public class SaveController extends Controller {
         saveIndex.render();
         int saveId = -1;
         while (saveId < 1) {
-            String input = this.waitOrAskForInput("> [s]elect {number} [c]reate [l]ist");
+            String input = this.waitOrAskForInput("> [s]elect {number} [c]reate [l]ist [d]elete {number}");
             if (handleGlobalCommand(input)) {
                 return;
             }
@@ -128,6 +128,27 @@ public class SaveController extends Controller {
                 }
             } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("list")) {
                 return;
+            } else if (input.startsWith("d ") || input.startsWith("delete ")) {
+                String[] parts = input.split(" ");
+                if (parts.length != 2) {
+                    System.out.println("Invalid command `" + input + "`");
+                } else {
+                    try {
+                        int id = Integer.parseInt(parts[1]);
+                        if (id <= 0) {
+                            System.out.println("Invalid selected hero `" + id + "`");
+                        } else if (id <= 0 || id > saves.length) {
+                            System.out.println("The selected save doesn't exists");
+                        } else {
+                            Save save = saves[id - 1];
+                            System.out.println("Deleting " + save.getPath());
+                            save.delete();
+                            return;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid selected hero `" + parts[1] + "`");
+                    }
+                }
             } else {
                 System.out.println("Invalid command `" + input + "`");
             }

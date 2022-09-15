@@ -98,6 +98,22 @@ public abstract class Hero {
         return experience;
     }
 
+    public Artefact getWeapon() {
+        return weapon;
+    }
+
+    public Artefact getArmor() {
+        return armor;
+    }
+
+    public Artefact getHelm() {
+        return helm;
+    }
+
+    public Caracteristics getFinalCaracteristics() {
+        return finalCaracteristics;
+    }
+
     public Coordinates getPosition() {
         return position;
     }

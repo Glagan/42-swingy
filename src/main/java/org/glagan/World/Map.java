@@ -23,12 +23,20 @@ public class Map {
         this.locations = locations;
     }
 
-    public Location[][] getLocations() {
-        return locations;
+    public String getName() {
+        return name;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public int getSize() {
         return size;
+    }
+
+    public Location[][] getLocations() {
+        return locations;
     }
 
     public void setPositionVisible(int x, int y) {

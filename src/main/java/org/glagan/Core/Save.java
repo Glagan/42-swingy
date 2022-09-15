@@ -57,6 +57,11 @@ public class Save {
         this.error = error;
     }
 
+    public boolean delete() {
+        File file = new File(path);
+        return file.delete();
+    }
+
     static public boolean ensureSavesDirectoryExists() {
         File saves = new File("saves");
         if (!saves.exists()) {

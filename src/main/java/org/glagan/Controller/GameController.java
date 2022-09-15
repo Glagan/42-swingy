@@ -6,9 +6,11 @@ import org.glagan.Core.Game;
 import org.glagan.Core.Input;
 import org.glagan.Display.Display;
 import org.glagan.Display.Mode;
+import org.glagan.View.Inventory;
 import org.glagan.View.Map;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Direction;
+import org.glagan.World.Location;
 
 enum GameState {
     INIT,
@@ -63,9 +65,9 @@ public class GameController extends Controller {
         }
     }
 
-    protected String waitOrAskForInput(String message) {
+    protected String waitOrAskForInput(String message, String prefix) {
         if (Display.getDisplay().equals(Mode.CONSOLE)) {
-            String input = Input.ask(message != null ? message : "> action", null);
+            String input = Input.ask(message, prefix);
             return input;
         } else {
             // TODO wait for a variable to change inside a view
@@ -79,14 +81,16 @@ public class GameController extends Controller {
         Map map = new Map(game.getMap(), hero);
         map.render();
         while (true) {
-            String input = this.waitOrAskForInput("> [s]how [i]nventory [m]ove {[n]orth|[e]ast|[s]outh|[w]est}");
+            String input = this.waitOrAskForInput("> [s]how [i]nventory [m]ove {[n]orth|[e]ast|[s]outh|[w]est}", null);
             if (handleGlobalCommand(input)) {
                 return;
             }
             if (input.equalsIgnoreCase("s") || input.equalsIgnoreCase("show")) {
                 return;
             } else if (input.equalsIgnoreCase("i") || input.equalsIgnoreCase("inventory")) {
-                // TODO show inventory and wait for "Enter" then reload
+                Inventory inventory = new Inventory(game.getMap(), hero);
+                inventory.render();
+                this.waitOrAskForInput(null, "Press enter to go back");
                 return;
             } else if (input.startsWith("m ") || input.startsWith("move ")) {
                 String[] parts = input.split(" ");
@@ -96,20 +100,27 @@ public class GameController extends Controller {
                     String direction = parts[1];
                     if (direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("north")) {
                         game.moveHero(Direction.NORTH);
-                        return;
                     } else if (direction.equalsIgnoreCase("e") || direction.equalsIgnoreCase("east")) {
                         game.moveHero(Direction.EAST);
-                        return;
                     } else if (direction.equalsIgnoreCase("s") || direction.equalsIgnoreCase("south")) {
                         game.moveHero(Direction.SOUTH);
-                        return;
                     } else if (direction.equalsIgnoreCase("w") || direction.equalsIgnoreCase("west")) {
                         game.moveHero(Direction.WEST);
-                        return;
                     } else {
                         System.out
                                 .println("Invalid direction `" + direction + "`, expected north, east, south or west");
                     }
+
+                    // Handle moving on an enemy position
+                    Coordinates heroPosition = hero.getPosition();
+                    Location newLocation = game.getMap().getLocations()[heroPosition.getX()][heroPosition.getY()];
+                    if (newLocation.hasEnemies()) {
+                        game.setCurrentEnemy(newLocation.getEnemies()[0]);
+                        game.save();
+                        swingy.useFightController();
+                    }
+
+                    return;
                 }
             } else {
                 System.out.println("Invalid command `" + input + "`");
