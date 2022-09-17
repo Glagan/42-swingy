@@ -24,8 +24,8 @@ public class Inventory extends View {
     public void console() {
         System.out.println();
         System.out.println(hero.getName() + ", " + hero.className() + " level " + hero.getLevel());
-        System.out.println("Currently in " + map.getName() + " (level " + map.getLevel() + ") at x"
-                + hero.getPosition().getX() + " y" + hero.getPosition().getY());
+        System.out.println("Currently in " + map.getName() + " (level " + map.getLevel() + ") [x"
+                + hero.getPosition().getX() + "; y" + hero.getPosition().getY() + "]");
 
         if (hero.getHelm() != null) {
             printArtefact(hero.getHelm());

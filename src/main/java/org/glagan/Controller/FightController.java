@@ -2,17 +2,16 @@ package org.glagan.Controller;
 
 import java.util.Random;
 
-import org.glagan.Artefact.Artefact;
-import org.glagan.Artefact.ArtefactSlot;
-import org.glagan.Artefact.Rarity;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
-import org.glagan.Core.Caracteristics;
+import org.glagan.Core.FightCharacter;
+import org.glagan.Core.FightReport;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
 import org.glagan.Display.Display;
 import org.glagan.Display.Mode;
 import org.glagan.View.Encounter;
+import org.glagan.View.Fight;
 import org.glagan.View.Lose;
 import org.glagan.View.RunFailure;
 import org.glagan.View.RunSuccess;
@@ -37,22 +36,6 @@ public class FightController extends Controller {
         return null;
     }
 
-    protected boolean fightEnemy() {
-        Game game = swingy.getGame();
-        // Hero hero = game.getHero();
-        // Enemy enemy = game.getCurrentEnemy();
-
-        // TODO fight logic
-        // TODO drop logic
-        // TODO experience and level logic
-
-        game.setCurrentEnemy(null);
-        game.removeEnemiesAfterFight();
-        game.save();
-
-        return new Random().nextBoolean();
-    }
-
     @Override
     public void run() {
         Game game = swingy.getGame();
@@ -71,9 +54,10 @@ public class FightController extends Controller {
         } else if (input.equalsIgnoreCase("r") || input.equalsIgnoreCase("run")) {
             boolean runSuccess = new Random().nextBoolean();
             if (runSuccess) {
+                game.setCurrentEnemy(null);
+                game.save();
                 new RunSuccess().render();
                 this.waitOrAskForInput(null, "Press enter to go back");
-                game.setCurrentEnemy(null);
                 swingy.useGameController();
                 return;
             } else {
@@ -86,24 +70,17 @@ public class FightController extends Controller {
 
         // If the fight is happening, execute the logic
         if (doFight) {
-            boolean win = fightEnemy();
-            // TODO move logic to Game instead and only display/change controller here
-            if (win) {
+            FightReport report = game.fightEnemy();
+            new Fight(report).render();
+            if (report.getWinner().equals(FightCharacter.PLAYER)) {
                 new Win().render();
-                Artefact artefact = null;
-                boolean drop = new Random().nextBoolean();
-                if (drop) {
-                    artefact = new Artefact("Test", Rarity.COMMON, new Caracteristics(1, 1, 10), ArtefactSlot.HELM);
-                    game.setEnemyDrop(artefact);
-                    game.save();
-                } else {
+                if (game.getEnemyDrop() == null) {
                     this.waitOrAskForInput(null, "Press enter to go back");
                 }
                 swingy.useGameController();
             } else {
-                game.setMap(null);
-                game.save();
                 new Lose().render();
+                this.waitOrAskForInput(null, "Press enter to go to the main menu");
                 swingy.useStartController();
             }
         }

@@ -43,9 +43,6 @@ public class GameController extends Controller {
             state = GameState.DROP;
         } else if (game.getMap() == null) {
             game.generateNewMap();
-            int center = game.getMap().getSize() / 2;
-            game.getHero().setPosition(new Coordinates(center, center));
-            game.updateVisibility();
             game.save();
             state = GameState.MAP;
         }
@@ -142,6 +139,7 @@ public class GameController extends Controller {
                 game.getHero().equipArtefact(artefact);
                 game.setEnemyDrop(null);
                 game.save();
+                return;
             } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("leave")) {
                 game.setEnemyDrop(null);
                 game.save();

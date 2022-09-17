@@ -5,10 +5,13 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.glagan.Adapters.GsonCustomBuilder;
 import org.glagan.Artefact.Artefact;
+import org.glagan.Artefact.ArtefactSlot;
+import org.glagan.Artefact.Rarity;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
 import org.glagan.World.Coordinates;
@@ -148,12 +151,6 @@ public class Game {
         save();
     }
 
-    public void removeEnemiesAfterFight() {
-        Coordinates position = hero.getPosition();
-        map.removeEnemies(position.getX(), position.getY());
-        save();
-    }
-
     public Artefact getEnemyDrop() {
         return enemyDrop;
     }
@@ -172,9 +169,73 @@ public class Game {
 
     public void generateNewMap() {
         // Cleanup previous enemyDrop and currentEnemy if they were modified in the save
-        this.enemyDrop = null;
-        this.currentEnemy = null;
-        this.map = MapGenerator.getGenerator().generate(hero.getLevel());
+        enemyDrop = null;
+        currentEnemy = null;
+        map = MapGenerator.getGenerator().generate(hero.getLevel());
+        int center = map.getSize() / 2;
+        hero.setPosition(new Coordinates(center, center));
+        updateVisibility();
+    }
+
+    public FightReport fightEnemy() {
+        Random rand = new Random();
+        FightReport report = new FightReport();
+        ArrayList<String> logs = new ArrayList<String>();
+
+        FightCharacter character = rand.nextBoolean() ? FightCharacter.PLAYER : FightCharacter.ENEMY;
+        Caracteristics enemyCaracteristics = currentEnemy.getCaracteristics().clone();
+        Caracteristics heroCaracteristics = hero.getFinalCaracteristics().clone();
+        while (true) {
+            if (character.equals(FightCharacter.PLAYER)) {
+                int damage = Math.max(1, heroCaracteristics.getAttack() - enemyCaracteristics.getDefense());
+                logs.add("You deal " + damage + " (" + heroCaracteristics.getAttack() + "-"
+                        + enemyCaracteristics.getDefense() + ") damage to " + currentEnemy.getName() + " ("
+                        + enemyCaracteristics.getHitPoints() + "hp remaining)");
+                enemyCaracteristics.setHitPoints(enemyCaracteristics.getHitPoints() - damage);
+                if (enemyCaracteristics.getHitPoints() <= 0) {
+                    logs.add("You killed " + currentEnemy.getName() + " !");
+                    report.setWinner(character);
+                    break;
+                }
+                character = FightCharacter.ENEMY;
+            } else {
+                int damage = Math.max(1, enemyCaracteristics.getAttack() - heroCaracteristics.getDefense());
+                logs.add(currentEnemy.getName() + " deals " + damage + " (" + enemyCaracteristics.getAttack() + "-"
+                        + heroCaracteristics.getDefense() + ") damage to you (" + heroCaracteristics.getHitPoints()
+                        + "hp remaining)");
+                heroCaracteristics.setHitPoints(heroCaracteristics.getHitPoints() - damage);
+                if (heroCaracteristics.getHitPoints() <= 0) {
+                    logs.add(currentEnemy.getName() + " killed you !");
+                    report.setWinner(character);
+                    break;
+                }
+                character = FightCharacter.PLAYER;
+            }
+        }
+        report.logs = logs;
+
+        setCurrentEnemy(null);
+        Coordinates position = hero.getPosition();
+        map.removeEnemies(position.getX(), position.getY());
+        save();
+
+        if (report.winner.equals(FightCharacter.PLAYER)) {
+            // TODO drop logic
+            // TODO experience and level logic
+            Artefact artefact = null;
+            boolean drop = new Random().nextBoolean();
+            if (drop) {
+                artefact = new Artefact("Test", Rarity.COMMON, new Caracteristics(1, 1, 10), ArtefactSlot.HELM);
+                setEnemyDrop(artefact);
+                save();
+            } else {
+            }
+        } else {
+            setMap(null);
+            save();
+        }
+
+        return report;
     }
 
     public String serialize() {
