@@ -33,7 +33,18 @@ abstract public class View {
                 System.out.print("Weapon\t");
                 break;
         }
-        System.out.println(Chalk.on(artefact.getName()).underline());
+        System.out.print(Chalk.on(artefact.getName()).underline() + " ");
+        switch (artefact.getRarity()) {
+            case LEGENDARY:
+                System.out.println("(" + Chalk.on("Legendary").yellow() + ")");
+                break;
+            case RARE:
+                System.out.println("(" + Chalk.on("Rare").cyan() + ")");
+                break;
+            case COMMON:
+                System.out.println("(Common)");
+                break;
+        }
         System.out.print("\t");
         Caracteristics bonuses = artefact.getBonuses();
         boolean wrote = false;

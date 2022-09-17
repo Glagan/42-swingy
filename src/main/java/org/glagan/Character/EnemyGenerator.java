@@ -10,34 +10,32 @@ public class EnemyGenerator {
     protected static Random rand = new Random();
     protected static EnemyGenerator generator = new EnemyGenerator();
 
-    protected String[] namePrefixes = {
+    protected String[] prefixes = {
             "Crazy", "Mad"
     };
 
-    protected String[] nameCores = {
+    protected String[] cores = {
             "Orc", "Rat", "Slime", "Elf", "Minotaur", "Skeleton"
     };
 
-    protected String[] nameSuffixes = {
+    protected String[] suffixes = {
             "King", "Slayer", "Spirit"
     };
 
-    public EnemyGenerator() {
+    protected EnemyGenerator() {
     }
 
     protected String name() {
-        Random rand = new Random();
-
         String prefix = null;
         if (rand.nextBoolean()) {
-            prefix = namePrefixes[rand.nextInt(namePrefixes.length)];
+            prefix = prefixes[rand.nextInt(prefixes.length)];
         }
 
-        String core = nameCores[rand.nextInt(nameCores.length)];
+        String core = cores[rand.nextInt(cores.length)];
 
         String suffix = null;
         if (rand.nextBoolean()) {
-            suffix = nameSuffixes[rand.nextInt(nameSuffixes.length)];
+            suffix = suffixes[rand.nextInt(suffixes.length)];
         }
 
         return (prefix != null ? prefix + " " : "") + core + (suffix != null ? " " + suffix : "");
@@ -49,7 +47,7 @@ public class EnemyGenerator {
         String name = this.name();
         EnemyRank rank = EnemyRank.values()[rand.nextInt(rankLength)];
         int rankBonus = rank.equals(EnemyRank.BOSS) ? 6 : rank.equals(EnemyRank.LIEUTNANT) ? 3 : 0;
-        int statsPool = (level - 1) * 10 + 9 + rankBonus;
+        int statsPool = (level - 1) * 14 + 9 + rankBonus;
         Caracteristics caracteristics = new Caracteristics(1, 1, 10);
         double statsVariance = rand.nextDouble();
         if (statsVariance < 0.33) {

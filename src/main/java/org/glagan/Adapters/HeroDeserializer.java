@@ -24,7 +24,7 @@ public class HeroDeserializer implements JsonDeserializer<Hero> {
                     json.getAsJsonObject().remove("type");
                     Hero hero = (Hero) new Gson().fromJson(json, heroClass);
                     if (hero != null) {
-                        hero.initializeCaracteristics();
+                        hero.calculateFinalCaracteristics();
                     }
                     return hero;
                 }

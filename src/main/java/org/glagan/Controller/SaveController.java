@@ -190,7 +190,7 @@ public class SaveController extends Controller {
                     input = Input.ask("> Class (Magician, Paladin, Warrior)", "= ");
                     hero = HeroFactory.newHero(input, name);
                     if (hero != null) {
-                        hero.initializeCaracteristics();
+                        hero.calculateFinalCaracteristics();
                         createState++;
                     } else {
                         System.out.println("Invalid class");

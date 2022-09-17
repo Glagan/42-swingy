@@ -11,35 +11,33 @@ public class MapGenerator {
     protected static Random rand = new Random();
     protected static MapGenerator generator = new MapGenerator();
 
-    protected String[] namePrefixes = {
+    protected String[] prefixes = {
             "Sacred", "Damned", "Lost", "Unknown", "Calm"
     };
 
-    protected String[] mapCores = {
+    protected String[] cores = {
             "Plain", "Forest", "Mountain", "Desert", "Taiga", "Tundra", "Swamp", "Savannah", "Badland", "Beach",
             "Ocean", "Arena"
     };
 
-    protected String[] mapSuffixes = {
+    protected String[] suffixes = {
             "of Thran", "of the Pirates"
     };
 
-    public MapGenerator() {
+    protected MapGenerator() {
     }
 
     protected String name() {
-        Random rand = new Random();
-
         String prefix = null;
         if (rand.nextBoolean()) {
-            prefix = namePrefixes[rand.nextInt(namePrefixes.length)];
+            prefix = prefixes[rand.nextInt(prefixes.length)];
         }
 
-        String core = mapCores[rand.nextInt(mapCores.length)];
+        String core = cores[rand.nextInt(cores.length)];
 
         String suffix = null;
         if (rand.nextBoolean()) {
-            suffix = mapSuffixes[rand.nextInt(mapSuffixes.length)];
+            suffix = suffixes[rand.nextInt(suffixes.length)];
         }
 
         return (prefix != null ? prefix + " " : "") + core + (suffix != null ? " " + suffix : "");
@@ -48,7 +46,6 @@ public class MapGenerator {
     static protected int biomeLength = Biome.values().length;
 
     protected Location location(int level, int x, int y, int enemyCount) {
-        Random rand = new Random();
         Biome biome = Biome.values()[rand.nextInt(biomeLength)];
         Enemy[] enemies = enemyCount > 0 ? new Enemy[enemyCount] : null;
         for (int i = 0; i < enemyCount; i++) {

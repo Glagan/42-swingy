@@ -9,9 +9,7 @@ import org.glagan.Display.Mode;
 import org.glagan.View.ArtefactDrop;
 import org.glagan.View.Inventory;
 import org.glagan.View.Map;
-import org.glagan.World.Coordinates;
 import org.glagan.World.Direction;
-import org.glagan.World.Location;
 
 enum GameState {
     INIT,
@@ -72,6 +70,13 @@ public class GameController extends Controller {
         return null;
     }
 
+    protected void moveHeroInDirection(Direction direction) {
+        Game game = swingy.getGame();
+        if (game.moveHero(direction)) {
+            swingy.useFightController();
+        }
+    }
+
     protected void map() {
         Game game = swingy.getGame();
         Hero hero = game.getHero();
@@ -89,6 +94,14 @@ public class GameController extends Controller {
                 inventory.render();
                 this.waitOrAskForInput(null, "Press enter to go back");
                 return;
+            } else if (input.equalsIgnoreCase("mn")) {
+                moveHeroInDirection(Direction.NORTH);
+            } else if (input.equalsIgnoreCase("me")) {
+                moveHeroInDirection(Direction.EAST);
+            } else if (input.equalsIgnoreCase("ms")) {
+                moveHeroInDirection(Direction.SOUTH);
+            } else if (input.equalsIgnoreCase("mw")) {
+                moveHeroInDirection(Direction.WEST);
             } else if (input.startsWith("m ") || input.startsWith("move ")) {
                 String[] parts = input.split(" ");
                 if (parts.length != 2) {
@@ -96,27 +109,17 @@ public class GameController extends Controller {
                 } else {
                     String direction = parts[1];
                     if (direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("north")) {
-                        game.moveHero(Direction.NORTH);
+                        moveHeroInDirection(Direction.NORTH);
                     } else if (direction.equalsIgnoreCase("e") || direction.equalsIgnoreCase("east")) {
-                        game.moveHero(Direction.EAST);
+                        moveHeroInDirection(Direction.EAST);
                     } else if (direction.equalsIgnoreCase("s") || direction.equalsIgnoreCase("south")) {
-                        game.moveHero(Direction.SOUTH);
+                        moveHeroInDirection(Direction.SOUTH);
                     } else if (direction.equalsIgnoreCase("w") || direction.equalsIgnoreCase("west")) {
-                        game.moveHero(Direction.WEST);
+                        moveHeroInDirection(Direction.WEST);
                     } else {
                         System.out
                                 .println("Invalid direction `" + direction + "`, expected north, east, south or west");
                     }
-
-                    // Handle moving on an enemy position
-                    Coordinates heroPosition = hero.getPosition();
-                    Location newLocation = game.getMap().getLocations()[heroPosition.getX()][heroPosition.getY()];
-                    if (newLocation.hasEnemies()) {
-                        game.setCurrentEnemy(newLocation.getEnemies()[0]);
-                        game.save();
-                        swingy.useFightController();
-                    }
-
                     return;
                 }
             } else {

@@ -10,12 +10,12 @@ import java.util.Random;
 
 import org.glagan.Adapters.GsonCustomBuilder;
 import org.glagan.Artefact.Artefact;
-import org.glagan.Artefact.ArtefactSlot;
-import org.glagan.Artefact.Rarity;
+import org.glagan.Artefact.ArtefactGenerator;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Direction;
+import org.glagan.World.Location;
 import org.glagan.World.Map;
 import org.glagan.World.MapGenerator;
 
@@ -123,7 +123,8 @@ public class Game {
         }
     }
 
-    public void moveHero(Direction direction) {
+    // Return true if an enemy was encountered or else false
+    public boolean moveHero(Direction direction) {
         Coordinates heroPosition = hero.getPosition();
         switch (direction) {
             case NORTH:
@@ -149,6 +150,15 @@ public class Game {
         }
         updateVisibility();
         save();
+
+        // Handle enemies encounter
+        Location newLocation = map.getLocations()[heroPosition.getX()][heroPosition.getY()];
+        if (newLocation.hasEnemies()) {
+            setCurrentEnemy(newLocation.getEnemies()[0]);
+            save();
+            return true;
+        }
+        return false;
     }
 
     public Artefact getEnemyDrop() {
@@ -214,22 +224,21 @@ public class Game {
         }
         report.logs = logs;
 
+        int enemyLevel = currentEnemy.getLevel();
         setCurrentEnemy(null);
         Coordinates position = hero.getPosition();
         map.removeEnemies(position.getX(), position.getY());
         save();
 
         if (report.winner.equals(FightCharacter.PLAYER)) {
-            // TODO drop logic
-            // TODO experience and level logic
-            Artefact artefact = null;
-            boolean drop = new Random().nextBoolean();
-            if (drop) {
-                artefact = new Artefact("Test", Rarity.COMMON, new Caracteristics(1, 1, 10), ArtefactSlot.HELM);
-                setEnemyDrop(artefact);
+            // Drop random artefacts
+            if (new Random().nextBoolean()) {
+                setEnemyDrop(ArtefactGenerator.getGenerator().generate(enemyLevel));
                 save();
-            } else {
             }
+            // TODO experience and level logic
+            // Add enemy experience to the current experience and update the player level
+            // Show the experience gained and if we gained a level
         } else {
             setMap(null);
             save();

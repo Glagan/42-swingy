@@ -17,7 +17,6 @@ public class Inventory extends View {
     @Override
     public void gui() {
         // TODO Auto-generated method stub
-
     }
 
     @Override

@@ -83,6 +83,7 @@ public abstract class Hero {
                 this.weapon = artefact;
                 break;
         }
+        calculateFinalCaracteristics();
     }
 
     public void removeArtefact(ArtefactSlot slot) {
@@ -97,6 +98,7 @@ public abstract class Hero {
                 this.weapon = null;
                 break;
         }
+        calculateFinalCaracteristics();
     }
 
     public String getName() {
@@ -161,7 +163,7 @@ public abstract class Hero {
      * extract the level from the experience amount
      * https://www.wolframalpha.com/widgets/view.jsp?id=c778a2d8bf30ef1d3c2d6bc5696defad
      */
-    public void initializeCaracteristics() {
+    public void calculateFinalCaracteristics() {
         level = Math.max((int) Math.floor((1 / 90) * (Math.sqrt(18 * experience - 8000) - 10)), 1);
         baseCaracteristics = getBaseCaracteristics();
         Caracteristics perLevel = getCaracteristicsPerLevel();
