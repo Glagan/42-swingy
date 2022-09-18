@@ -236,9 +236,10 @@ public class Game {
                 setEnemyDrop(ArtefactGenerator.getGenerator().generate(enemyLevel));
                 save();
             }
-            // TODO experience and level logic
-            // Add enemy experience to the current experience and update the player level
-            // Show the experience gained and if we gained a level
+            // Gain experience and update the level accordingly
+            int experience = (enemyLevel * 500) + rand.nextInt(500) - 250;
+            report.setExperience(experience);
+            report.setLeveledUp(hero.addExperience(experience));
         } else {
             setMap(null);
             save();

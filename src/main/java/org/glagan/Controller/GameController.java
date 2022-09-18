@@ -96,12 +96,16 @@ public class GameController extends Controller {
                 return;
             } else if (input.equalsIgnoreCase("mn")) {
                 moveHeroInDirection(Direction.NORTH);
+                return;
             } else if (input.equalsIgnoreCase("me")) {
                 moveHeroInDirection(Direction.EAST);
+                return;
             } else if (input.equalsIgnoreCase("ms")) {
                 moveHeroInDirection(Direction.SOUTH);
+                return;
             } else if (input.equalsIgnoreCase("mw")) {
                 moveHeroInDirection(Direction.WEST);
+                return;
             } else if (input.startsWith("m ") || input.startsWith("move ")) {
                 String[] parts = input.split(" ");
                 if (parts.length != 2) {

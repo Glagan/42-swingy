@@ -158,13 +158,30 @@ public abstract class Hero {
         }
     }
 
+    public boolean addExperience(int experience) {
+        int previousLevel = level;
+        this.experience += experience;
+        calculateFinalCaracteristics();
+        return previousLevel != level;
+    }
+
     /**
-     * Solve equation x = (y * 1000) + (y - 1)^2 * 450 for variable y (level) to
-     * extract the level from the experience amount
-     * https://www.wolframalpha.com/widgets/view.jsp?id=c778a2d8bf30ef1d3c2d6bc5696defad
+     * Experience required per level x = (y * 1000) + (y - 1)^2 * 450
+     *
+     * @return
+     */
+    public int nextLevelExperience() {
+        return (int) ((level * 1000) + Math.pow(level - 1, 2) * 450);
+    }
+
+    /**
+     * Update the Hero level and final caracteristics based on the calculated level
      */
     public void calculateFinalCaracteristics() {
-        level = Math.max((int) Math.floor((1 / 90) * (Math.sqrt(18 * experience - 8000) - 10)), 1);
+        level = 1;
+        while (nextLevelExperience() < experience) {
+            level += 1;
+        }
         baseCaracteristics = getBaseCaracteristics();
         Caracteristics perLevel = getCaracteristicsPerLevel();
         finalCaracteristics = new Caracteristics(

@@ -22,7 +22,8 @@ public class Inventory extends View {
     @Override
     public void console() {
         System.out.println();
-        System.out.println(hero.getName() + ", " + hero.className() + " level " + hero.getLevel());
+        System.out.println(hero.getName() + ", " + hero.className() + " level " + hero.getLevel() + " ("
+                + hero.getExperience() + "/" + hero.nextLevelExperience() + ")");
         System.out.println("Currently in " + map.getName() + " (level " + map.getLevel() + ") [x"
                 + hero.getPosition().getX() + "; y" + hero.getPosition().getY() + "]");
 

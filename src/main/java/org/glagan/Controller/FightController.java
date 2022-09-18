@@ -12,10 +12,8 @@ import org.glagan.Display.Display;
 import org.glagan.Display.Mode;
 import org.glagan.View.Encounter;
 import org.glagan.View.Fight;
-import org.glagan.View.Lose;
 import org.glagan.View.RunFailure;
 import org.glagan.View.RunSuccess;
-import org.glagan.View.Win;
 
 public class FightController extends Controller {
     public FightController(org.glagan.Core.Swingy swingy) {
@@ -71,16 +69,14 @@ public class FightController extends Controller {
         // If the fight is happening, execute the logic
         if (doFight) {
             FightReport report = game.fightEnemy();
-            new Fight(report).render();
+            new Fight(report, hero).render();
             if (report.getWinner().equals(FightCharacter.PLAYER)) {
-                new Win().render();
                 if (game.getEnemyDrop() == null) {
                     this.waitOrAskForInput(null, "Press enter to go back");
                 }
                 swingy.useGameController();
             } else {
-                new Lose().render();
-                this.waitOrAskForInput(null, "Press enter to go to the main menu");
+                this.waitOrAskForInput(null, "Press enter to go back to the main menu");
                 swingy.useStartController();
             }
         }
