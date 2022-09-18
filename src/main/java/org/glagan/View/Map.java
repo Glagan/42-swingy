@@ -30,12 +30,20 @@ public class Map extends View {
         System.out.println();
         System.out.print("┌");
         for (int i = 0; i < size; i++) {
-            System.out.print("─");
+            if (heroPosition.getX() == 0 && heroPosition.getY() == i) {
+                System.out.print("╨");
+            } else {
+                System.out.print("─");
+            }
         }
         System.out.println("┐");
 
         for (int x = 0; x < size; x++) {
-            System.out.print("│");
+            if (heroPosition.getY() == 0 && heroPosition.getX() == x) {
+                System.out.print("╡");
+            } else {
+                System.out.print("│");
+            }
             for (int y = 0; y < size; y++) {
                 Boolean hasPlayer = x == heroPosition.getX() && y == heroPosition.getY();
                 Location location = locations[x][y];
@@ -55,12 +63,20 @@ public class Map extends View {
                     System.out.print(" ");
                 }
             }
-            System.out.println("│");
+            if (heroPosition.getY() == size - 1 && heroPosition.getX() == x) {
+                System.out.println("╞");
+            } else {
+                System.out.println("│");
+            }
         }
 
         System.out.print("└");
         for (int i = 0; i < size; i++) {
-            System.out.print("─");
+            if (heroPosition.getX() == size - 1 && heroPosition.getY() == i) {
+                System.out.print("╥");
+            } else {
+                System.out.print("─");
+            }
         }
         System.out.println("┘");
     }

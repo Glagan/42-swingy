@@ -82,6 +82,9 @@ public class Game {
     }
 
     public void updateVisibility() {
+        // TODO merge both loops, use the increment + current position instead of
+        // TODO -- incrementing a position
+
         // Set locations global visibility
         Coordinates heroPosition = hero.getPosition();
         int size = map.getSize();
@@ -89,36 +92,23 @@ public class Game {
         int xDown = Math.min(size, heroPosition.getX() + 2);
         int yUp = Math.max(0, heroPosition.getY() - 2);
         int yDown = Math.min(size, heroPosition.getY() + 2);
-        for (; xUp < xDown; xUp++) {
-            for (int y = yUp; y < yDown; y++) {
-                map.setPositionVisible(xUp, y);
+        for (; xUp <= xDown; xUp++) {
+            for (int y = yUp; y <= yDown; y++) {
+                if (xUp >= 0 && xUp < size && y >= 0 && y < size) {
+                    map.setPositionVisible(xUp, y);
+                }
             }
         }
-
-        int x = heroPosition.getX();
-        int y = heroPosition.getY();
-        if (x > 0) {
-            if (y > 0) {
-                map.setEnemiesVisible(x - 1, y - 1);
-            }
-            map.setEnemiesVisible(x - 1, y);
-            if (y < size - 1) {
-                map.setEnemiesVisible(x - 1, y + 1);
-            }
-        }
-        if (y > 0) {
-            map.setEnemiesVisible(x, y - 1);
-        }
-        if (y < size - 1) {
-            map.setEnemiesVisible(x, y + 1);
-        }
-        if (x < size - 1) {
-            if (y > 0) {
-                map.setEnemiesVisible(x + 1, y - 1);
-            }
-            map.setEnemiesVisible(x + 1, y);
-            if (y < size - 1) {
-                map.setEnemiesVisible(x + 1, y + 1);
+        // Set enemies visibility
+        xUp = Math.max(0, heroPosition.getX() - 1);
+        xDown = Math.min(size, heroPosition.getX() + 1);
+        yUp = Math.max(0, heroPosition.getY() - 1);
+        yDown = Math.min(size, heroPosition.getY() + 1);
+        for (; xUp <= xDown; xUp++) {
+            for (int y = yUp; y <= yDown; y++) {
+                if (xUp >= 0 && xUp < size && y >= 0 && y < size) {
+                    map.setEnemiesVisible(xUp, y);
+                }
             }
         }
     }
@@ -126,38 +116,54 @@ public class Game {
     // Return true if an enemy was encountered or else false
     public boolean moveHero(Direction direction) {
         Coordinates heroPosition = hero.getPosition();
+        boolean borderReached = false;
         switch (direction) {
             case NORTH:
                 if (heroPosition.getX() > 0) {
                     hero.move(direction);
+                } else {
+                    borderReached = true;
                 }
                 break;
             case EAST:
                 if (heroPosition.getY() < map.getSize() - 1) {
                     hero.move(direction);
+                } else {
+                    borderReached = true;
                 }
                 break;
             case SOUTH:
                 if (heroPosition.getX() < map.getSize() - 1) {
                     hero.move(direction);
+                } else {
+                    borderReached = true;
                 }
                 break;
             case WEST:
                 if (heroPosition.getY() > 0) {
                     hero.move(direction);
+                } else {
+                    borderReached = true;
                 }
                 break;
         }
-        updateVisibility();
-        save();
 
-        // Handle enemies encounter
-        Location newLocation = map.getLocations()[heroPosition.getX()][heroPosition.getY()];
-        if (newLocation.hasEnemies()) {
-            setCurrentEnemy(newLocation.getEnemies()[0]);
+        if (!borderReached) {
+            updateVisibility();
+            // Handle enemies encounter
+            Location newLocation = map.getLocations()[heroPosition.getX()][heroPosition.getY()];
+            if (newLocation.hasEnemies()) {
+                setCurrentEnemy(newLocation.getEnemies()[0]);
+                save();
+                return true;
+            } else {
+                save();
+            }
+        } else {
+            generateNewMap(direction);
             save();
-            return true;
         }
+
         return false;
     }
 
@@ -177,13 +183,19 @@ public class Game {
         this.currentEnemy = currentEnemy;
     }
 
-    public void generateNewMap() {
+    /**
+     * Generate a new random map and assign it to the game.
+     *
+     * @param fromDirection
+     */
+    public void generateNewMap(Direction fromDirection) {
         // Cleanup previous enemyDrop and currentEnemy if they were modified in the save
         enemyDrop = null;
         currentEnemy = null;
         map = MapGenerator.getGenerator().generate(hero.getLevel());
         int center = map.getSize() / 2;
-        hero.setPosition(new Coordinates(center, center));
+        Coordinates start = new Coordinates(center, center);
+        hero.setPosition(start);
         updateVisibility();
     }
 

@@ -40,7 +40,7 @@ public class GameController extends Controller {
         if (game.getEnemyDrop() != null) {
             state = GameState.DROP;
         } else if (game.getMap() == null) {
-            game.generateNewMap();
+            game.generateNewMap(null);
             game.save();
             state = GameState.MAP;
         }
