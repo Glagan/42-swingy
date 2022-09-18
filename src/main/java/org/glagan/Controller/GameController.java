@@ -4,7 +4,7 @@ import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Hero;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
-import org.glagan.Display.Display;
+import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 import org.glagan.View.ArtefactDrop;
 import org.glagan.View.Inventory;
@@ -61,7 +61,7 @@ public class GameController extends Controller {
     }
 
     protected String waitOrAskForInput(String message, String prefix) {
-        if (Display.getDisplay().equals(Mode.CONSOLE)) {
+        if (CurrentDisplay.getMode().equals(Mode.CONSOLE)) {
             String input = Input.ask(message, prefix);
             return input;
         } else {

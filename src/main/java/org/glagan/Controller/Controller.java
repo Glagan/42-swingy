@@ -1,7 +1,7 @@
 package org.glagan.Controller;
 
 import org.glagan.Core.Swingy;
-import org.glagan.Display.Display;
+import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 import org.glagan.View.Help;
 
@@ -12,7 +12,15 @@ abstract public class Controller {
         this.swingy = swingy;
     }
 
+    /**
+     * Handle global commands in console mode before handling controller commands
+     *
+     * @return true if the input contains a global command or else false
+     */
     protected boolean handleGlobalCommand(String input) {
+        if (input == null) {
+            return false;
+        }
         if (input.equalsIgnoreCase("h") || input.equalsIgnoreCase("help")) {
             new Help().render();
             return true;
@@ -27,7 +35,8 @@ abstract public class Controller {
             if (parts.length == 2) {
                 Mode mode = Mode.fromString(parts[1]);
                 if (mode != null) {
-                    Display.setDisplay(mode);
+                    CurrentDisplay.setMode(mode);
+                    swingy.getUi().show();
                 } else {
                     System.out.println("Invalid set-display `" + parts[1] + "`, expected `console` or `gui`");
                 }

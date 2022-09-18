@@ -10,7 +10,7 @@ import org.glagan.Character.HeroFactory;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
 import org.glagan.Core.Save;
-import org.glagan.Display.Display;
+import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 import org.glagan.View.HeroCreation;
 import org.glagan.View.SaveIndex;
@@ -89,7 +89,7 @@ public class SaveController extends Controller {
     }
 
     protected String waitOrAskForInput(String message) {
-        if (Display.getDisplay().equals(Mode.CONSOLE)) {
+        if (CurrentDisplay.getMode().equals(Mode.CONSOLE)) {
             String input = Input.ask(message != null ? message : "> action", null);
             return input;
         } else {

@@ -2,7 +2,7 @@ package org.glagan.View;
 
 import org.glagan.Artefact.Artefact;
 import org.glagan.Core.Caracteristics;
-import org.glagan.Display.Display;
+import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 
 import com.github.tomaslanger.chalk.Chalk;
@@ -13,7 +13,7 @@ abstract public class View {
     abstract public void gui();
 
     final public void render() {
-        Mode mode = Display.getDisplay();
+        Mode mode = CurrentDisplay.getMode();
         if (mode.equals(Mode.CONSOLE)) {
             this.console();
         } else {

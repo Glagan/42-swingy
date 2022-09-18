@@ -8,7 +8,7 @@ import org.glagan.Core.FightCharacter;
 import org.glagan.Core.FightReport;
 import org.glagan.Core.Game;
 import org.glagan.Core.Input;
-import org.glagan.Display.Display;
+import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 import org.glagan.View.Encounter;
 import org.glagan.View.Fight;
@@ -25,7 +25,7 @@ public class FightController extends Controller {
     }
 
     protected String waitOrAskForInput(String message, String prefix) {
-        if (Display.getDisplay().equals(Mode.CONSOLE)) {
+        if (CurrentDisplay.getMode().equals(Mode.CONSOLE)) {
             String input = Input.ask(message, prefix);
             return input;
         } else {

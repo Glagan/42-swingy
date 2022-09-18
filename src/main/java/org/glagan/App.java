@@ -2,16 +2,15 @@ package org.glagan;
 
 import java.util.logging.Level;
 
-// import org.glagan.Character.Warrior;
-// import org.glagan.Core.Game;
 import org.glagan.Core.Save;
 import org.glagan.Core.Swingy;
-import org.glagan.Display.Display;
+import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
-// import org.glagan.World.Map;
 
 public class App {
     public static void main(String[] args) {
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
+
         Mode displayMode = Mode.CONSOLE;
         if (args.length == 1) {
             switch (args[0]) {
@@ -23,19 +22,21 @@ public class App {
                     break;
             }
         }
-        Display.setDisplay(displayMode);
-
-        // Game test = new Game(new Warrior("Glagan"), new Map("Test", 1, 5, null),
-        // null, null);
-        // System.out.println(test.serialize());
+        CurrentDisplay.setMode(displayMode);
 
         // Ensure the saves directory exists
         if (!Save.ensureSavesDirectoryExists()) {
             return;
         }
 
-        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
-        Swingy swingy = new Swingy();
-        swingy.run();
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (CurrentDisplay.getMode().equals(Mode.GUI)) {
+                    Swingy.getInstance().getUi().show();
+                } else {
+                    Swingy.getInstance().consoleLoop();
+                }
+            }
+        });
     }
 }

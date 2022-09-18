@@ -5,10 +5,16 @@ import org.glagan.Controller.FightController;
 import org.glagan.Controller.GameController;
 import org.glagan.Controller.SaveController;
 import org.glagan.Controller.StartController;
+import org.glagan.Display.CurrentDisplay;
+import org.glagan.Display.Mode;
+import org.glagan.Display.UI;
 
 public class Swingy {
+    static protected Swingy instance = new Swingy();
+
     protected Game game;
     protected boolean playing;
+    protected UI ui;
 
     protected StartController startController;
     protected SaveController saveController;
@@ -24,6 +30,7 @@ public class Swingy {
         this.gameController = new GameController(this);
         this.fightController = new FightController(this);
         this.activeController = this.startController;
+        this.ui = new UI();
     }
 
     public Game getGame() {
@@ -32,6 +39,10 @@ public class Swingy {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public UI getUi() {
+        return ui;
     }
 
     protected void useController(Controller controller) {
@@ -62,9 +73,13 @@ public class Swingy {
         this.playing = false;
     }
 
-    public void run() {
-        while (this.playing && this.activeController != null) {
+    public void consoleLoop() {
+        while (CurrentDisplay.getMode().equals(Mode.CONSOLE) && this.playing && this.activeController != null) {
             this.activeController.run();
         }
+    }
+
+    static public Swingy getInstance() {
+        return instance;
     }
 }
