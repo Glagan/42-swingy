@@ -47,9 +47,11 @@ public class EnemyGenerator {
         String name = this.name();
         EnemyRank rank = EnemyRank.values()[rand.nextInt(rankLength)];
         int rankBonus = rank.equals(EnemyRank.BOSS) ? 6 : rank.equals(EnemyRank.LIEUTNANT) ? 3 : 0;
-        int statsPool = (level - 1) * 14 + rankBonus;
-        if (level > 10) {
-            statsPool += 9;
+        int statsPool = rankBonus;
+        if (level == 1) {
+            statsPool += 8;
+        } else {
+            statsPool += (level - 1) * 14;
         }
         Caracteristics caracteristics = new Caracteristics(1, 1, 10);
         double statsVariance = rand.nextDouble();

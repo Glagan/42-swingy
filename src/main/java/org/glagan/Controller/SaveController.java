@@ -144,6 +144,7 @@ public class SaveController extends Controller {
                         Save save = saves[id - 1];
                         System.out.println("Deleting " + save.getPath());
                         save.delete();
+                        reloadSaves();
                         return true;
                     }
                 } catch (NumberFormatException e) {

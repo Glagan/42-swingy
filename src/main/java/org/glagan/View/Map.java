@@ -79,5 +79,7 @@ public class Map extends View {
             }
         }
         System.out.println("┘");
+
+        waitInputAndDispatch("> [s]how [i]nventory [m]ove {[n]orth|[e]ast|[s]outh|[w]est}", null);
     }
 }

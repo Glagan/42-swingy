@@ -31,5 +31,6 @@ public class ArtefactDrop extends View {
         } else {
             System.out.println("You currently do not have anything equipped in this slot");
         }
+        waitInputAndDispatch("> [e]quip [l]eave", null);
     }
 }

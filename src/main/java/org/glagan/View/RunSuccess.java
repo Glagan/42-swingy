@@ -14,5 +14,6 @@ public class RunSuccess extends View {
     @Override
     public void console() {
         System.out.println("You managed to run away from your opponent !");
+        waitGoBack("Press enter to go back");
     }
 }

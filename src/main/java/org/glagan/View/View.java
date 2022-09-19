@@ -34,20 +34,20 @@ abstract public class View {
     }
 
     protected boolean waitInputAndDispatch(String message, String prefix) {
-        String input = Input.ask(message != null ? message : "> action", prefix);
+        String input = Input.ask(message, prefix);
         return dispatch(input);
     }
 
     protected boolean waitInputAndLoopDispatch(String message, String prefix, String commandPrefix) {
         String input;
         do {
-            input = Input.ask(message != null ? message : "> action", prefix);
+            input = Input.ask(message, prefix);
         } while (!dispatch(commandPrefix != null ? commandPrefix + " " + input : input));
         return true;
     }
 
     protected boolean waitGoBack(String message) {
-        this.waitInputAndDispatch(null, message != null ? message : "Press enter to go back");
+        Input.ask(null, message != null ? message : "Press enter to go back");
         return dispatch("continue");
     }
 

@@ -246,12 +246,13 @@ public class Game {
             // Drop random artefacts
             if (new Random().nextBoolean()) {
                 setEnemyDrop(ArtefactGenerator.getGenerator().generate(enemyLevel));
-                save();
+                report.setHasDrop(true);
             }
             // Gain experience and update the level accordingly
             int experience = (enemyLevel * 500) + rand.nextInt(500) - 250;
             report.setExperience(experience);
             report.setLeveledUp(hero.addExperience(experience));
+            save();
         } else {
             setMap(null);
             save();

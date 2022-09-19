@@ -32,5 +32,6 @@ public class Encounter extends View {
         Caracteristics heroCaracteristics = hero.getFinalCaracteristics();
         System.out.println(heroCaracteristics.getAttack() + " attack, " + heroCaracteristics.getDefense() + " defense, "
                 + heroCaracteristics.getHitPoints() + " hp");
+        waitInputAndDispatch("> [f]ight [r]run", null);
     }
 }

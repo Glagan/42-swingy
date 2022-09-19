@@ -45,5 +45,6 @@ public class Inventory extends View {
         } else {
             System.out.println("Weapon\t" + Chalk.on("None").bold());
         }
+        waitGoBack("Press enter to go back");
     }
 }

@@ -6,7 +6,8 @@ public class FightReport {
     protected List<String> logs;
     protected FightCharacter winner;
     protected int experience;
-    protected boolean leveledUp;
+    protected boolean _leveledUp;
+    protected boolean _hasDrop;
 
     public FightReport() {
     }
@@ -23,8 +24,12 @@ public class FightReport {
         return experience;
     }
 
-    public boolean getLeveledUp() {
-        return leveledUp;
+    public boolean leveledUp() {
+        return _leveledUp;
+    }
+
+    public boolean hasDrop() {
+        return _hasDrop;
     }
 
     public void setLogs(List<String> logs) {
@@ -40,6 +45,10 @@ public class FightReport {
     }
 
     public void setLeveledUp(boolean leveledUp) {
-        this.leveledUp = leveledUp;
+        this._leveledUp = leveledUp;
+    }
+
+    public void setHasDrop(boolean hasDrop) {
+        this._hasDrop = hasDrop;
     }
 }

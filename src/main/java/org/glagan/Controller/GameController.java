@@ -1,11 +1,6 @@
 package org.glagan.Controller;
 
-import org.glagan.Artefact.Artefact;
-import org.glagan.Character.Hero;
 import org.glagan.Core.Game;
-import org.glagan.Core.Input;
-import org.glagan.Display.CurrentDisplay;
-import org.glagan.Display.Mode;
 import org.glagan.View.ArtefactDrop;
 import org.glagan.View.Inventory;
 import org.glagan.View.Map;
@@ -31,50 +26,6 @@ public class GameController extends Controller {
 
     }
 
-    @Override
-    public boolean handle(String event) {
-        return false;
-    }
-
-    @Override
-    public void run() {
-        // Check if the game has a map already generated
-        Game game = swingy.getGame();
-
-        // If there is a remaining drop, handle it before continuing
-        if (game.getEnemyDrop() != null) {
-            state = GameState.DROP;
-        } else if (game.getMap() == null) {
-            game.generateNewMap(null);
-            game.save();
-            state = GameState.MAP;
-        }
-        // If there is a fight in progress go to the fight controller instead
-        else if (game.getCurrentEnemy() != null) {
-            swingy.useFightController();
-            return;
-        } else {
-            state = GameState.MAP;
-        }
-
-        // Execute the current state action
-        if (this.state.equals(GameState.MAP)) {
-            this.map();
-        } else {
-            this.artefactDrop();
-        }
-    }
-
-    protected String waitOrAskForInput(String message, String prefix) {
-        if (CurrentDisplay.getMode().equals(Mode.CONSOLE)) {
-            String input = Input.ask(message, prefix);
-            return input;
-        } else {
-            // TODO wait for a variable to change inside a view
-        }
-        return null;
-    }
-
     protected void moveHeroInDirection(Direction direction) {
         Game game = swingy.getGame();
         if (game.moveHero(direction)) {
@@ -82,81 +33,82 @@ public class GameController extends Controller {
         }
     }
 
-    protected void map() {
-        Game game = swingy.getGame();
-        Hero hero = game.getHero();
-        new Map(this, game.getMap(), hero).render();
-        while (true) {
-            String input = this.waitOrAskForInput("> [s]how [i]nventory [m]ove {[n]orth|[e]ast|[s]outh|[w]est}", null);
-            if (handleGlobalCommand(input)) {
-                return;
-            }
-            if (input.equalsIgnoreCase("s") || input.equalsIgnoreCase("show")) {
-                return;
-            } else if (input.equalsIgnoreCase("i") || input.equalsIgnoreCase("inventory")) {
-                new Inventory(this, game.getMap(), hero).render();
-                this.waitOrAskForInput(null, "Press enter to go back");
-                return;
-            } else if (input.equalsIgnoreCase("mn")) {
-                moveHeroInDirection(Direction.NORTH);
-                return;
-            } else if (input.equalsIgnoreCase("me")) {
-                moveHeroInDirection(Direction.EAST);
-                return;
-            } else if (input.equalsIgnoreCase("ms")) {
-                moveHeroInDirection(Direction.SOUTH);
-                return;
-            } else if (input.equalsIgnoreCase("mw")) {
-                moveHeroInDirection(Direction.WEST);
-                return;
-            } else if (input.startsWith("m ") || input.startsWith("move ")) {
-                String[] parts = input.split(" ");
-                if (parts.length != 2) {
-                    System.out.println("Invalid command `" + input + "`");
-                } else {
-                    String direction = parts[1];
-                    if (direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("north")) {
-                        moveHeroInDirection(Direction.NORTH);
-                    } else if (direction.equalsIgnoreCase("e") || direction.equalsIgnoreCase("east")) {
-                        moveHeroInDirection(Direction.EAST);
-                    } else if (direction.equalsIgnoreCase("s") || direction.equalsIgnoreCase("south")) {
-                        moveHeroInDirection(Direction.SOUTH);
-                    } else if (direction.equalsIgnoreCase("w") || direction.equalsIgnoreCase("west")) {
-                        moveHeroInDirection(Direction.WEST);
-                    } else {
-                        System.out
-                                .println("Invalid direction `" + direction + "`, expected north, east, south or west");
-                    }
-                    return;
-                }
-            } else {
-                System.out.println("Invalid command `" + input + "`");
-            }
+    @Override
+    public boolean handle(String event) {
+        if (handleGlobalCommand(event)) {
+            return true;
         }
+        Game game = swingy.getGame();
+        if (event.equalsIgnoreCase("s") || event.equalsIgnoreCase("show")) {
+            return true;
+        } else if (event.equalsIgnoreCase("i") || event.equalsIgnoreCase("inventory")) {
+            new Inventory(this, game.getMap(), game.getHero()).render();
+            return true;
+        } else if (event.equalsIgnoreCase("mn")) {
+            moveHeroInDirection(Direction.NORTH);
+            return true;
+        } else if (event.equalsIgnoreCase("me")) {
+            moveHeroInDirection(Direction.EAST);
+            return true;
+        } else if (event.equalsIgnoreCase("ms")) {
+            moveHeroInDirection(Direction.SOUTH);
+            return true;
+        } else if (event.equalsIgnoreCase("mw")) {
+            moveHeroInDirection(Direction.WEST);
+            return true;
+        } else if (event.startsWith("m ") || event.startsWith("move ")) {
+            String[] parts = event.split(" ");
+            if (parts.length != 2) {
+                System.out.println("Invalid command `" + event + "`");
+            } else {
+                String direction = parts[1];
+                if (direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("north")) {
+                    moveHeroInDirection(Direction.NORTH);
+                    return true;
+                } else if (direction.equalsIgnoreCase("e") || direction.equalsIgnoreCase("east")) {
+                    moveHeroInDirection(Direction.EAST);
+                    return true;
+                } else if (direction.equalsIgnoreCase("s") || direction.equalsIgnoreCase("south")) {
+                    moveHeroInDirection(Direction.SOUTH);
+                    return true;
+                } else if (direction.equalsIgnoreCase("w") || direction.equalsIgnoreCase("west")) {
+                    moveHeroInDirection(Direction.WEST);
+                    return true;
+                } else {
+                    System.out
+                            .println("Invalid direction `" + direction + "`, expected north, east, south or west");
+                }
+            }
+        } else if (event.equalsIgnoreCase("e") || event.equalsIgnoreCase("equip")) {
+            game.getHero().equipArtefact(game.getEnemyDrop());
+            game.setEnemyDrop(null);
+            game.save();
+            return true;
+        } else if (event.equalsIgnoreCase("l") || event.equalsIgnoreCase("leave")) {
+            game.setEnemyDrop(null);
+            game.save();
+        } else if (event.equalsIgnoreCase("inventory")) {
+            return true;
+        } else {
+            System.out.println("Invalid command `" + event + "`");
+        }
+        return false;
     }
 
-    protected void artefactDrop() {
+    @Override
+    public void run() {
         Game game = swingy.getGame();
-        Artefact artefact = game.getEnemyDrop();
-        new ArtefactDrop(this, game.getHero(), game.getEnemyDrop()).render();
 
-        while (true) {
-            String input = this.waitOrAskForInput("> [e]quip [l]eave", null);
-            if (handleGlobalCommand(input)) {
-                return;
-            }
-            if (input.equalsIgnoreCase("e") || input.equalsIgnoreCase("equip")) {
-                game.getHero().equipArtefact(artefact);
-                game.setEnemyDrop(null);
+        if (game.getEnemyDrop() != null) {
+            new ArtefactDrop(this, game.getHero(), game.getEnemyDrop()).render();
+        } else if (game.getCurrentEnemy() != null) {
+            swingy.useFightController();
+        } else {
+            if (game.getMap() == null) {
+                game.generateNewMap(null);
                 game.save();
-                return;
-            } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("leave")) {
-                game.setEnemyDrop(null);
-                game.save();
-                return;
-            } else {
-                System.out.println("Invalid command `" + input + "`");
             }
+            new Map(this, game.getMap(), game.getHero()).render();
         }
     }
 }
