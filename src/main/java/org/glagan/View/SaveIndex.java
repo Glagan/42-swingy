@@ -40,8 +40,14 @@ public class SaveIndex extends View implements ListSelectionListener, ActionList
                 playButton.setEnabled(false);
                 deleteButton.setEnabled(false);
             } else {
-                playButton.setEnabled(true);
-                deleteButton.setEnabled(true);
+                Save save = saves[list.getSelectedIndex()];
+                if (!save.isCorrupted()) {
+                    playButton.setEnabled(true);
+                    deleteButton.setEnabled(true);
+                } else {
+                    playButton.setEnabled(false);
+                    deleteButton.setEnabled(false);
+                }
             }
         }
     }
@@ -60,6 +66,9 @@ public class SaveIndex extends View implements ListSelectionListener, ActionList
                 model.remove(index);
                 panel.repaint();
             }
+        } else if (action.equals("create")) {
+            dispatch("create");
+            controller.getUi().repaint();
         }
     }
 
@@ -99,6 +108,11 @@ public class SaveIndex extends View implements ListSelectionListener, ActionList
         deleteButton.addActionListener(this);
         actionPanel.add(deleteButton);
         panel.add(actionPanel);
+
+        JButton createButton = new JButton("Create a Hero");
+        createButton.setActionCommand("create");
+        createButton.addActionListener(this);
+        panel.add(createButton);
 
         controller.getFrame().setContentPane(panel);
         controller.getUi().repaint();

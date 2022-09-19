@@ -19,18 +19,13 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
-enum SaveState {
-    LIST,
-    CREATE
-}
-
 public class SaveController extends Controller {
-    protected SaveState state;
     protected int selected;
     protected Save[] saves;
 
     // Hero creation logic
     protected String heroName;
+    protected String heroClass;
 
     public SaveController(org.glagan.Core.Swingy swingy) {
         super(swingy);
@@ -82,9 +77,9 @@ public class SaveController extends Controller {
 
     @Override
     public void reset() {
-        this.state = SaveState.LIST;
         this.selected = -1;
         this.heroName = null;
+        this.heroClass = null;
     }
 
     protected void selectSave(int id) {
@@ -108,7 +103,7 @@ public class SaveController extends Controller {
             return true;
         }
         if (event.equalsIgnoreCase("c") || event.equalsIgnoreCase("create")) {
-            this.state = SaveState.CREATE;
+            new HeroCreation(this).render();
             return true;
         } else if (event.startsWith("s ") || event.startsWith("select ")) {
             String[] parts = event.split(" ");
@@ -165,18 +160,22 @@ public class SaveController extends Controller {
                 System.out.println("Invalid class");
                 return false;
             }
-            Hero hero = HeroFactory.newHero(split[1], heroName);
-            if (hero != null) {
-                hero.calculateFinalCaracteristics();
-                Game game = new Game(hero, null, null, null);
-                game.generateSavePath();
-                game.save();
-                swingy.setGame(game);
-                swingy.useGameController();
+            heroClass = split[1];
+            if (heroClass.equalsIgnoreCase("magician") || heroClass.equalsIgnoreCase("warrior")
+                    || heroClass.equalsIgnoreCase("paladin")) {
                 return true;
             } else {
                 System.out.println("Invalid class");
             }
+        } else if (event.equalsIgnoreCase("finalize-hero")) {
+            Hero hero = HeroFactory.newHero(heroClass, heroName);
+            hero.calculateFinalCaracteristics();
+            Game game = new Game(hero, null, null, null);
+            game.generateSavePath();
+            game.save();
+            swingy.setGame(game);
+            swingy.useGameController();
+            return true;
         } else {
             System.out.println("Invalid command `" + event + "`");
         }
@@ -185,11 +184,7 @@ public class SaveController extends Controller {
 
     @Override
     public void run() {
-        if (this.state.equals(SaveState.LIST)) {
-            Save[] saves = this.getSaves();
-            new SaveIndex(this, saves).render();
-        } else {
-            new HeroCreation(this).render();
-        }
+        Save[] saves = this.getSaves();
+        new SaveIndex(this, saves).render();
     }
 }
