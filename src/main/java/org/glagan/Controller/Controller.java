@@ -17,12 +17,12 @@ abstract public class Controller {
      *
      * @return true if the input contains a global command or else false
      */
-    protected boolean handleGlobalCommand(String input) {
+    protected final boolean handleGlobalCommand(String input) {
         if (input == null) {
             return false;
         }
         if (input.equalsIgnoreCase("h") || input.equalsIgnoreCase("help")) {
-            new Help().render();
+            new Help(this).render();
             return true;
         } else if (input.equalsIgnoreCase("home")) {
             swingy.useSaveController();
@@ -49,6 +49,8 @@ abstract public class Controller {
     }
 
     abstract public void reset();
+
+    abstract public boolean handle(String event);
 
     abstract public void run();
 }

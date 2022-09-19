@@ -1,6 +1,12 @@
 package org.glagan.View;
 
+import org.glagan.Controller.Controller;
+
 public class Start extends View {
+    public Start(Controller controller) {
+        super(controller);
+    }
+
     @Override
     public void gui() {
     }
@@ -14,5 +20,6 @@ public class Start extends View {
         System.out.println("set-display, [h]elp, home, quit");
         System.out.println("The other commands available to you are displayed above the prompt.");
         System.out.println("Enjoy the game !");
+        dispatch("continue");
     }
 }

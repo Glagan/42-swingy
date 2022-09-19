@@ -8,10 +8,7 @@ import java.util.Set;
 import org.glagan.Character.Hero;
 import org.glagan.Character.HeroFactory;
 import org.glagan.Core.Game;
-import org.glagan.Core.Input;
 import org.glagan.Core.Save;
-import org.glagan.Display.CurrentDisplay;
-import org.glagan.Display.Mode;
 import org.glagan.View.HeroCreation;
 import org.glagan.View.SaveIndex;
 
@@ -30,13 +27,18 @@ enum SaveState {
 public class SaveController extends Controller {
     protected SaveState state;
     protected int selected;
+    protected Save[] saves;
+
+    // Hero creation logic
+    protected String heroName;
 
     public SaveController(org.glagan.Core.Swingy swingy) {
         super(swingy);
         this.reset();
+        this.saves = reloadSaves();
     }
 
-    public Save[] getSaves() {
+    public Save[] reloadSaves() {
         String[] files = Save.listSaveFiles();
         if (files == null) {
             return null;
@@ -70,6 +72,11 @@ public class SaveController extends Controller {
             index += 1;
         }
 
+        this.saves = saves;
+        return saves;
+    }
+
+    public Save[] getSaves() {
         return saves;
     }
 
@@ -77,85 +84,12 @@ public class SaveController extends Controller {
     public void reset() {
         this.state = SaveState.LIST;
         this.selected = -1;
+        this.heroName = null;
     }
 
-    @Override
-    public void run() {
-        if (this.state.equals(SaveState.LIST)) {
-            this.saveIndex();
-        } else {
-            this.heroCreation();
-        }
-    }
-
-    protected String waitOrAskForInput(String message) {
-        if (CurrentDisplay.getMode().equals(Mode.CONSOLE)) {
-            String input = Input.ask(message != null ? message : "> action", null);
-            return input;
-        } else {
-            // TODO wait for a variable to change inside a view
-        }
-        return null;
-    }
-
-    protected void saveIndex() {
-        Save[] saves = this.getSaves();
-        new SaveIndex(saves).render();
-        int saveId = -1;
-        while (saveId < 1) {
-            String input = this.waitOrAskForInput("> [s]elect {number} [c]reate [l]ist [d]elete {number}");
-            if (handleGlobalCommand(input)) {
-                return;
-            }
-            if (input.equalsIgnoreCase("c") || input.equalsIgnoreCase("create")) {
-                this.state = SaveState.CREATE;
-                break;
-            } else if (input.startsWith("s ") || input.startsWith("select ")) {
-                String[] parts = input.split(" ");
-                if (parts.length != 2) {
-                    System.out.println("Invalid command `" + input + "`");
-                } else {
-                    try {
-                        int id = Integer.parseInt(parts[1]);
-                        if (id <= 0) {
-                            System.out.println("Invalid selected hero `" + id + "`");
-                        } else {
-                            saveId = id;
-                            break;
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid selected hero `" + parts[1] + "`");
-                    }
-                }
-            } else if (input.equalsIgnoreCase("l") || input.equalsIgnoreCase("list")) {
-                return;
-            } else if (input.startsWith("d ") || input.startsWith("delete ")) {
-                String[] parts = input.split(" ");
-                if (parts.length != 2) {
-                    System.out.println("Invalid command `" + input + "`");
-                } else {
-                    try {
-                        int id = Integer.parseInt(parts[1]);
-                        if (id <= 0) {
-                            System.out.println("Invalid selected hero `" + id + "`");
-                        } else if (id <= 0 || id > saves.length) {
-                            System.out.println("The selected save doesn't exists");
-                        } else {
-                            Save save = saves[id - 1];
-                            System.out.println("Deleting " + save.getPath());
-                            save.delete();
-                            return;
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid selected hero `" + parts[1] + "`");
-                    }
-                }
-            } else {
-                System.out.println("Invalid command `" + input + "`");
-            }
-        }
-        if (saveId > 0 && saveId - 1 < saves.length) {
-            Save save = saves[saveId - 1];
+    protected void selectSave(int id) {
+        if (id > 0 && id - 1 < saves.length) {
+            Save save = saves[id - 1];
             if (save.isCorrupted()) {
                 System.out.println("The selected save is corrupted and can't be played");
             } else {
@@ -168,42 +102,93 @@ public class SaveController extends Controller {
         }
     }
 
-    protected void heroCreation() {
-        new HeroCreation().render();
-
-        int createState = 0;
-        String name = null;
-        Hero hero = null;
-        while (createState < 2) {
-            String input;
-            switch (createState) {
-                case 0:
-                    input = Input.ask("> Name", "= ");
-                    if (input != null && input.length() > 0) {
-                        name = input;
-                        createState++;
-                    } else {
-                        System.out.println("You should enter a name for your hero");
-                    }
-                    break;
-                case 1:
-                    input = Input.ask("> Class (Magician, Paladin, Warrior)", "= ");
-                    hero = HeroFactory.newHero(input, name);
-                    if (hero != null) {
-                        hero.calculateFinalCaracteristics();
-                        createState++;
-                    } else {
-                        System.out.println("Invalid class");
-                    }
-                    break;
-            }
+    @Override
+    public boolean handle(String event) {
+        if (handleGlobalCommand(event)) {
+            return true;
         }
-        if (hero != null) {
-            Game game = new Game(hero, null, null, null);
-            game.generateSavePath();
-            game.save();
-            swingy.setGame(game);
-            swingy.useGameController();
+        if (event.equalsIgnoreCase("c") || event.equalsIgnoreCase("create")) {
+            this.state = SaveState.CREATE;
+            return true;
+        } else if (event.startsWith("s ") || event.startsWith("select ")) {
+            String[] parts = event.split(" ");
+            if (parts.length != 2) {
+                System.out.println("Invalid command `" + event + "`");
+            } else {
+                try {
+                    int id = Integer.parseInt(parts[1]);
+                    if (id <= 0) {
+                        System.out.println("Invalid selected hero `" + id + "`");
+                    } else {
+                        selectSave(id);
+                        return true;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid selected hero `" + parts[1] + "`");
+                }
+            }
+        } else if (event.equalsIgnoreCase("l") || event.equalsIgnoreCase("list")) {
+            return true;
+        } else if (event.startsWith("d ") || event.startsWith("delete ")) {
+            String[] parts = event.split(" ");
+            if (parts.length != 2) {
+                System.out.println("Invalid command `" + event + "`");
+            } else {
+                try {
+                    int id = Integer.parseInt(parts[1]);
+                    if (id <= 0) {
+                        System.out.println("Invalid selected hero `" + id + "`");
+                    } else if (id <= 0 || id > saves.length) {
+                        System.out.println("The selected save doesn't exists");
+                    } else {
+                        Save save = saves[id - 1];
+                        System.out.println("Deleting " + save.getPath());
+                        save.delete();
+                        return true;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid selected hero `" + parts[1] + "`");
+                }
+            }
+        } else if (event.startsWith("set-name ")) {
+            String[] split = event.split(" ");
+            if (split.length != 2) {
+                System.out.println("Invalid name");
+                return false;
+            }
+            heroName = split[1];
+            return true;
+        } else if (event.startsWith("set-class ")) {
+            String[] split = event.split(" ");
+            if (split.length != 2) {
+                System.out.println("Invalid class");
+                return false;
+            }
+            Hero hero = HeroFactory.newHero(split[1], heroName);
+            if (hero != null) {
+                hero.calculateFinalCaracteristics();
+                Game game = new Game(hero, null, null, null);
+                game.generateSavePath();
+                game.save();
+                swingy.setGame(game);
+                swingy.useGameController();
+                return true;
+            } else {
+                System.out.println("Invalid class");
+            }
+        } else {
+            System.out.println("Invalid command `" + event + "`");
+        }
+        return false;
+    }
+
+    @Override
+    public void run() {
+        if (this.state.equals(SaveState.LIST)) {
+            Save[] saves = this.getSaves();
+            new SaveIndex(this, saves).render();
+        } else {
+            new HeroCreation(this).render();
         }
     }
 }

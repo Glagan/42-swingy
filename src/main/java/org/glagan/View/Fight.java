@@ -4,19 +4,20 @@ import org.glagan.Character.Hero;
 import org.glagan.Core.FightCharacter;
 import org.glagan.Core.FightReport;
 
+import org.glagan.Controller.Controller;
+
 public class Fight extends View {
     protected FightReport report;
     protected Hero hero;
 
-    public Fight(FightReport report, Hero hero) {
+    public Fight(Controller controller, FightReport report, Hero hero) {
+        super(controller);
         this.report = report;
         this.hero = hero;
     }
 
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

@@ -7,15 +7,20 @@ public class StartController extends Controller {
         super(swingy);
     }
 
-    @Override
     public void reset() {
+    }
 
+    public boolean handle(String event) {
+        if (event.equals("continue")) {
+            swingy.useSaveController();
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void run() {
-        new Start().render();
-        swingy.useSaveController();
+        new Start(this).render();
     }
 
 }

@@ -35,13 +35,18 @@ public class FightController extends Controller {
     }
 
     @Override
+    public boolean handle(String event) {
+        return false;
+    }
+
+    @Override
     public void run() {
         Game game = swingy.getGame();
         Hero hero = game.getHero();
         Enemy enemy = game.getCurrentEnemy();
 
         // Initial Encounter view where the player choose to fight or leave
-        new Encounter(hero, enemy).render();
+        new Encounter(this, hero, enemy).render();
         String input = this.waitOrAskForInput("> [f]ight [r]run", null);
         if (handleGlobalCommand(input)) {
             return;
@@ -54,12 +59,12 @@ public class FightController extends Controller {
             if (runSuccess) {
                 game.setCurrentEnemy(null);
                 game.save();
-                new RunSuccess().render();
+                new RunSuccess(this).render();
                 this.waitOrAskForInput(null, "Press enter to go back");
                 swingy.useGameController();
                 return;
             } else {
-                new RunFailure().render();
+                new RunFailure(this).render();
                 doFight = true;
             }
         } else {
@@ -69,7 +74,7 @@ public class FightController extends Controller {
         // If the fight is happening, execute the logic
         if (doFight) {
             FightReport report = game.fightEnemy();
-            new Fight(report, hero).render();
+            new Fight(this, report, hero).render();
             if (report.getWinner().equals(FightCharacter.PLAYER)) {
                 if (game.getEnemyDrop() == null) {
                     this.waitOrAskForInput(null, "Press enter to go back");

@@ -3,6 +3,7 @@ package org.glagan.View;
 import org.glagan.Character.Hero;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Location;
+import org.glagan.Controller.Controller;
 
 import com.github.tomaslanger.chalk.Chalk;
 
@@ -10,15 +11,14 @@ public class Map extends View {
     protected org.glagan.World.Map map;
     protected Hero hero;
 
-    public Map(org.glagan.World.Map map, Hero hero) {
+    public Map(Controller controller, org.glagan.World.Map map, Hero hero) {
+        super(controller);
         this.map = map;
         this.hero = hero;
     }
 
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

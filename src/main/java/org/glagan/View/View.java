@@ -1,13 +1,21 @@
 package org.glagan.View;
 
 import org.glagan.Artefact.Artefact;
+import org.glagan.Controller.Controller;
 import org.glagan.Core.Caracteristics;
+import org.glagan.Core.Input;
 import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 
 import com.github.tomaslanger.chalk.Chalk;
 
 abstract public class View {
+    protected Controller controller;
+
+    public View(Controller controller) {
+        this.controller = controller;
+    }
+
     abstract public void console();
 
     abstract public void gui();
@@ -19,6 +27,28 @@ abstract public class View {
         } else {
             this.gui();
         }
+    }
+
+    protected boolean dispatch(String event) {
+        return controller.handle(event);
+    }
+
+    protected boolean waitInputAndDispatch(String message, String prefix) {
+        String input = Input.ask(message != null ? message : "> action", prefix);
+        return dispatch(input);
+    }
+
+    protected boolean waitInputAndLoopDispatch(String message, String prefix, String commandPrefix) {
+        String input;
+        do {
+            input = Input.ask(message != null ? message : "> action", prefix);
+        } while (!dispatch(commandPrefix != null ? commandPrefix + " " + input : input));
+        return true;
+    }
+
+    protected boolean waitGoBack(String message) {
+        this.waitInputAndDispatch(null, message != null ? message : "Press enter to go back");
+        return dispatch("continue");
     }
 
     protected void printArtefact(Artefact artefact) {

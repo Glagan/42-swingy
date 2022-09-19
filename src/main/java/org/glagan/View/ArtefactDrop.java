@@ -2,19 +2,20 @@ package org.glagan.View;
 
 import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Hero;
+import org.glagan.Controller.Controller;
 
 public class ArtefactDrop extends View {
     protected Hero hero;
     protected Artefact artefact;
 
-    public ArtefactDrop(Hero hero, Artefact artefact) {
+    public ArtefactDrop(Controller controller, Hero hero, Artefact artefact) {
+        super(controller);
         this.hero = hero;
         this.artefact = artefact;
     }
 
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
     }
 
     @Override

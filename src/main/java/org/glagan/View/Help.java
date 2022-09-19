@@ -1,10 +1,14 @@
 package org.glagan.View;
 
+import org.glagan.Controller.Controller;
+
 public class Help extends View {
+    public Help(Controller controller) {
+        super(controller);
+    }
+
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

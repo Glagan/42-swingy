@@ -32,6 +32,11 @@ public class GameController extends Controller {
     }
 
     @Override
+    public boolean handle(String event) {
+        return false;
+    }
+
+    @Override
     public void run() {
         // Check if the game has a map already generated
         Game game = swingy.getGame();
@@ -80,8 +85,7 @@ public class GameController extends Controller {
     protected void map() {
         Game game = swingy.getGame();
         Hero hero = game.getHero();
-        Map map = new Map(game.getMap(), hero);
-        map.render();
+        new Map(this, game.getMap(), hero).render();
         while (true) {
             String input = this.waitOrAskForInput("> [s]how [i]nventory [m]ove {[n]orth|[e]ast|[s]outh|[w]est}", null);
             if (handleGlobalCommand(input)) {
@@ -90,8 +94,7 @@ public class GameController extends Controller {
             if (input.equalsIgnoreCase("s") || input.equalsIgnoreCase("show")) {
                 return;
             } else if (input.equalsIgnoreCase("i") || input.equalsIgnoreCase("inventory")) {
-                Inventory inventory = new Inventory(game.getMap(), hero);
-                inventory.render();
+                new Inventory(this, game.getMap(), hero).render();
                 this.waitOrAskForInput(null, "Press enter to go back");
                 return;
             } else if (input.equalsIgnoreCase("mn")) {
@@ -135,7 +138,7 @@ public class GameController extends Controller {
     protected void artefactDrop() {
         Game game = swingy.getGame();
         Artefact artefact = game.getEnemyDrop();
-        new ArtefactDrop(game.getHero(), game.getEnemyDrop()).render();
+        new ArtefactDrop(this, game.getHero(), game.getEnemyDrop()).render();
 
         while (true) {
             String input = this.waitOrAskForInput("> [e]quip [l]eave", null);

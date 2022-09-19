@@ -1,9 +1,14 @@
 package org.glagan.View;
 
+import org.glagan.Controller.Controller;
+
 public class HeroCreation extends View {
+    public HeroCreation(Controller controller) {
+        super(controller);
+    }
+
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -15,5 +20,7 @@ public class HeroCreation extends View {
         System.out.println("Warrior:    3 (+3) Attack | 3 (+4) Defense | 4 (+3) Hitpoints");
         System.out.println("Magician:   5 (+6) Attack | 2 (+1) Defense | 3 (+3) Hitpoints");
         System.out.println("Paladin:    1 (+2) Attack | 4 (+4) Defense | 5 (+4) Hitpoints");
+        waitInputAndLoopDispatch("> Name", "= ", "set-name");
+        waitInputAndLoopDispatch("> Class (Magician, Paladin, Warrior)", "= ", "set-class");
     }
 }

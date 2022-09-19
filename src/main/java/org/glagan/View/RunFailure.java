@@ -1,10 +1,14 @@
 package org.glagan.View;
 
+import org.glagan.Controller.Controller;
+
 public class RunFailure extends View {
+    public RunFailure(Controller controller) {
+        super(controller);
+    }
+
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.glagan.View;
 
 import org.glagan.Character.Hero;
 import org.glagan.World.Map;
+import org.glagan.Controller.Controller;
 
 import com.github.tomaslanger.chalk.Chalk;
 
@@ -9,14 +10,14 @@ public class Inventory extends View {
     protected Map map;
     protected Hero hero;
 
-    public Inventory(Map map, Hero hero) {
+    public Inventory(Controller controller, Map map, Hero hero) {
+        super(controller);
         this.map = map;
         this.hero = hero;
     }
 
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
     }
 
     @Override

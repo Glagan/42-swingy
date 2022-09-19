@@ -4,19 +4,20 @@ import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
 import org.glagan.Core.Caracteristics;
 
+import org.glagan.Controller.Controller;
+
 public class Encounter extends View {
     protected Hero hero;
     protected Enemy enemy;
 
-    public Encounter(Hero hero, Enemy enemy) {
+    public Encounter(Controller controller, Hero hero, Enemy enemy) {
+        super(controller);
         this.hero = hero;
         this.enemy = enemy;
     }
 
     @Override
     public void gui() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

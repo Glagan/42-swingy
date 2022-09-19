@@ -47,6 +47,11 @@ public class Swingy {
 
     protected void useController(Controller controller) {
         this.activeController = controller;
+        // Run the controller only once in GUI mode
+        // -- The UI will then update itself trough events
+        if (CurrentDisplay.getMode().equals(Mode.GUI)) {
+            controller.run();
+        }
     }
 
     public void useStartController() {
@@ -56,6 +61,7 @@ public class Swingy {
 
     public void useSaveController() {
         this.activeController.reset();
+        this.saveController.reloadSaves();
         this.useController(this.saveController);
     }
 

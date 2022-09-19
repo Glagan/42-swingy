@@ -1,12 +1,14 @@
 package org.glagan.View;
 
 import org.glagan.Character.Hero;
+import org.glagan.Controller.Controller;
 import org.glagan.Core.Save;
 
 public class SaveIndex extends View {
     protected Save[] saves;
 
-    public SaveIndex(Save[] saves) {
+    public SaveIndex(Controller controller, Save[] saves) {
+        super(controller);
         this.saves = saves;
     }
 
@@ -34,5 +36,6 @@ public class SaveIndex extends View {
                 System.out.println();
             }
         }
+        waitInputAndDispatch("> [s]elect {number} [c]reate [l]ist [d]elete {number}", null);
     }
 }
