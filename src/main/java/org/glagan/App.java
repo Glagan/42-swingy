@@ -33,6 +33,7 @@ public class App {
             public void run() {
                 if (CurrentDisplay.getMode().equals(Mode.GUI)) {
                     Swingy.getInstance().getUi().show();
+                    Swingy.getInstance().runOnce();
                 } else {
                     Swingy.getInstance().consoleLoop();
                 }

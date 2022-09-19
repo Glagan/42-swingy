@@ -85,6 +85,10 @@ public class Swingy {
         }
     }
 
+    public void runOnce() {
+        this.activeController.run();
+    }
+
     static public Swingy getInstance() {
         return instance;
     }

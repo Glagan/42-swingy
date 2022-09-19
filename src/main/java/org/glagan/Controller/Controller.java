@@ -1,8 +1,11 @@
 package org.glagan.Controller;
 
+import javax.swing.JFrame;
+
 import org.glagan.Core.Swingy;
 import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
+import org.glagan.Display.UI;
 import org.glagan.View.Help;
 
 abstract public class Controller {
@@ -53,4 +56,12 @@ abstract public class Controller {
     abstract public boolean handle(String event);
 
     abstract public void run();
+
+    public final JFrame getFrame() {
+        return swingy.getUi().getFrame();
+    }
+
+    public final UI getUi() {
+        return swingy.getUi();
+    }
 }
