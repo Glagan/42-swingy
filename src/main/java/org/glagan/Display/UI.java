@@ -25,6 +25,8 @@ public class UI implements ActionListener {
             Swingy.getInstance().consoleLoop();
         } else if (action.equalsIgnoreCase("quit")) {
             Swingy.getInstance().quit();
+        } else if (action.equalsIgnoreCase("home")) {
+            Swingy.getInstance().useSaveController();
         } else if (action.equalsIgnoreCase("help")) {
             // TODO Show the help
         }
@@ -42,6 +44,12 @@ public class UI implements ActionListener {
         quitMenuItem.setActionCommand("quit");
         quitMenuItem.addActionListener(this);
         actionMenu.add(quitMenuItem);
+        JMenuItem homeMenuItem = new JMenuItem("Home");
+        homeMenuItem.setMnemonic(KeyEvent.VK_Q);
+        homeMenuItem.getAccessibleContext().setAccessibleDescription("Go back to the hero selection");
+        homeMenuItem.setActionCommand("home");
+        homeMenuItem.addActionListener(this);
+        actionMenu.add(homeMenuItem);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic(KeyEvent.VK_V);

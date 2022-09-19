@@ -10,7 +10,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -90,7 +89,6 @@ public class Map extends View implements ActionListener {
     @Override
     public void gui() {
         JPanel panel = new JPanel(new MigLayout("insets 0"));
-        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         JPanel mapPanel = new JPanel(new GridLayout(11, 1));
         locationLabels = new JLabel[SubMap.xSize][SubMap.ySize];
