@@ -1,10 +1,12 @@
 package org.glagan.View;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -31,17 +33,32 @@ public class Start extends View implements ActionListener {
     }
 
     @Override
+    public void actionPerformed(ActionEvent event) {
+        String action = event.getActionCommand();
+        if (action.equals("continue")) {
+            dispatch("continue");
+        }
+
+    }
+
+    @Override
     public void gui() {
-        JPanel panel = new JPanel(new GridLayout(5, 1));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
         JLabel welcome = new JLabel("Welcome to Swingy !");
         welcome.setHorizontalAlignment(JLabel.CENTER);
         panel.add(welcome);
 
+        JTextArea text = new JTextArea();
+        text.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        text.setLineWrap(true);
+        text.setWrapStyleWord(true);
+        text.setOpaque(false);
         for (String line : guiIntroduction) {
-            JLabel label = new JLabel(line);
-            panel.add(label);
+            text.append(line + "\n");
         }
+        panel.add(text);
 
         JButton play = new JButton("Play");
         play.setMnemonic(KeyEvent.VK_P);
@@ -54,16 +71,7 @@ public class Start extends View implements ActionListener {
 
         controller.getFrame().setContentPane(panel);
         controller.getUi().repaint();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        System.out.println(event.getActionCommand());
-        System.out.println(event);
-        if ("continue".equals(event.getActionCommand())) {
-            dispatch("continue");
-        }
-
+        play.requestFocusInWindow();
     }
 
     @Override

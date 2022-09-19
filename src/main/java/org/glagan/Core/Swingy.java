@@ -77,6 +77,8 @@ public class Swingy {
 
     public void quit() {
         this.playing = false;
+        ui.close();
+        System.exit(0);
     }
 
     public void consoleLoop() {

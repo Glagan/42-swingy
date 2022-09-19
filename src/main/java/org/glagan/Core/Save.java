@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.glagan.Character.Hero;
+
 public class Save {
     protected String path;
 
@@ -99,5 +101,13 @@ public class Save {
         }
 
         return paths;
+    }
+
+    public String toString() {
+        if (isCorrupted()) {
+            return getPath() + ", Corrupted: " + getError();
+        }
+        Hero hero = getGame().getHero();
+        return hero.getName() + ", " + hero.getClass().getSimpleName() + " level " + hero.getLevel();
     }
 }

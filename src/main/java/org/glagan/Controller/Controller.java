@@ -40,6 +40,7 @@ abstract public class Controller {
                 if (mode != null) {
                     CurrentDisplay.setMode(mode);
                     swingy.getUi().show();
+                    swingy.runOnce();
                 } else {
                     System.out.println("Invalid set-display `" + parts[1] + "`, expected `console` or `gui`");
                 }
