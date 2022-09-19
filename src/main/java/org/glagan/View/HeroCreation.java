@@ -7,6 +7,8 @@ import org.glagan.Character.Warrior;
 import org.glagan.Controller.Controller;
 import org.glagan.Core.Caracteristics;
 
+import net.miginfocom.swing.MigLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,7 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.ColorUIResource;
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -72,11 +73,9 @@ public class HeroCreation extends View implements ActionListener {
 
     @Override
     public void gui() {
-        JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        JPanel panel = new JPanel(new MigLayout("fillx"));
         JLabel classLabel = new JLabel("Select your class");
-        panel.add(classLabel);
-        classLabel.setHorizontalAlignment(JLabel.LEFT);
+        panel.add(classLabel, "span, grow");
 
         JRadioButton magicianButton = new JRadioButton("Magician");
         magicianButton.setMnemonic(KeyEvent.VK_M);
@@ -87,6 +86,8 @@ public class HeroCreation extends View implements ActionListener {
         JRadioButton paladinButton = new JRadioButton("Paladin");
         paladinButton.setMnemonic(KeyEvent.VK_P);
         paladinButton.setActionCommand("select-paladin");
+        magicianButton.setSelected(false);
+        paladinButton.addActionListener(this);
 
         JRadioButton warriorButton = new JRadioButton("Warrior");
         warriorButton.setMnemonic(KeyEvent.VK_W);
@@ -113,9 +114,9 @@ public class HeroCreation extends View implements ActionListener {
         hpLabel = new JLabel();
         statsPanel.add(hpLabel);
         classGlobalPanel.add(statsPanel);
-        panel.add(classGlobalPanel);
+        panel.add(classGlobalPanel, "span, grow");
 
-        panel.add(new JLabel("Enter your hero name"));
+        panel.add(new JLabel("Enter your hero name"), "span, grow, gap");
         JPanel heroNamePanel = new JPanel(new GridLayout(0, 1));
         JLabel nameError = new JLabel("Invalid hero name");
         nameError.setForeground(new ColorUIResource(200, 66, 66));
@@ -152,17 +153,15 @@ public class HeroCreation extends View implements ActionListener {
                 }
             }
         });
-        heroNamePanel.add(heroTextField);
-        heroNamePanel.add(nameError);
-        panel.add(heroNamePanel);
+        heroNamePanel.add(heroTextField, "span");
+        heroNamePanel.add(nameError, "span, grow, hidemode 1");
+        panel.add(heroNamePanel, "span, grow");
 
         createButton = new JButton("Create");
         createButton.setEnabled(false);
         createButton.setActionCommand("create");
         createButton.addActionListener(this);
-        JPanel createPanel = new JPanel();
-        createPanel.add(createButton);
-        panel.add(createPanel);
+        panel.add(createButton, "span, center");
 
         controller.getFrame().setContentPane(panel);
         controller.getUi().repaint();

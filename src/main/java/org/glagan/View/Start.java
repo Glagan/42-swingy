@@ -1,17 +1,16 @@
 package org.glagan.View;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import org.glagan.Controller.Controller;
+
+import net.miginfocom.swing.MigLayout;
 
 public class Start extends View implements ActionListener {
     static protected String[] guiIntroduction = {
@@ -38,40 +37,28 @@ public class Start extends View implements ActionListener {
         if (action.equals("continue")) {
             dispatch("continue");
         }
-
     }
 
     @Override
     public void gui() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        JPanel panel = new JPanel(new MigLayout("fillx"));
 
-        JLabel welcome = new JLabel("Welcome to Swingy !");
-        welcome.setHorizontalAlignment(JLabel.CENTER);
-        panel.add(welcome);
+        panel.add(new JLabel("Welcome to Swingy !"), "span, wrap, center");
 
-        JTextArea text = new JTextArea();
-        text.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        text.setLineWrap(true);
-        text.setWrapStyleWord(true);
-        text.setOpaque(false);
         for (String line : guiIntroduction) {
-            text.append(line + "\n");
+            panel.add(new JLabel(line), "span, wrap");
         }
-        panel.add(text);
 
         JButton play = new JButton("Play");
         play.setMnemonic(KeyEvent.VK_P);
         play.setActionCommand("continue");
         play.addActionListener(this);
         play.setHorizontalAlignment(JButton.CENTER);
-        JPanel playPanel = new JPanel();
-        playPanel.add(play);
-        panel.add(playPanel);
+        play.requestFocusInWindow();
+        panel.add(play, "span, center");
 
         controller.getFrame().setContentPane(panel);
         controller.getUi().repaint();
-        play.requestFocusInWindow();
     }
 
     @Override

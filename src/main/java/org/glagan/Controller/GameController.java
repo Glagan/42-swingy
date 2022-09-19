@@ -1,6 +1,9 @@
 package org.glagan.Controller;
 
+import org.glagan.Character.Hero;
 import org.glagan.Core.Game;
+import org.glagan.Display.CurrentDisplay;
+import org.glagan.Display.Mode;
 import org.glagan.View.ArtefactDrop;
 import org.glagan.View.Inventory;
 import org.glagan.View.Map;
@@ -28,8 +31,12 @@ public class GameController extends Controller {
 
     protected void moveHeroInDirection(Direction direction) {
         Game game = swingy.getGame();
+        org.glagan.World.Map oldMap = game.getMap();
         if (game.moveHero(direction)) {
             swingy.useFightController();
+        } else if (CurrentDisplay.getMode().equals(Mode.GUI) && oldMap != game.getMap()) {
+            // Re-render the GUI on map change, to avoid keeping old references in the UI
+            new Map(this, game.getMap(), game.getHero()).render();
         }
     }
 
@@ -98,6 +105,7 @@ public class GameController extends Controller {
     @Override
     public void run() {
         Game game = swingy.getGame();
+        Hero hero = game.getHero();
 
         if (game.getEnemyDrop() != null) {
             new ArtefactDrop(this, game.getHero(), game.getEnemyDrop()).render();
@@ -108,7 +116,7 @@ public class GameController extends Controller {
                 game.generateNewMap(null);
                 game.save();
             }
-            new Map(this, game.getMap(), game.getHero()).render();
+            new Map(this, game.getMap(), hero).render();
         }
     }
 }

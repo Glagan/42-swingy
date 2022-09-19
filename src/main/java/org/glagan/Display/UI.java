@@ -73,12 +73,12 @@ public class UI implements ActionListener {
         frame.setPreferredSize(dimensions);
         frame.setMinimumSize(dimensions);
         frame.setMaximumSize(dimensions);
-        frame.pack();
         frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.repaint();
     }
 
     public void show() {
-        frame.pack();
         frame.setVisible(true);
     }
 

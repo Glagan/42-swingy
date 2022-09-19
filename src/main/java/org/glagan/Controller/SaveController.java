@@ -149,7 +149,6 @@ public class SaveController extends Controller {
         } else if (event.startsWith("set-name ")) {
             String[] split = event.split(" ");
             if (split.length != 2) {
-                System.out.println("Invalid name");
                 return false;
             }
             heroName = split[1];
