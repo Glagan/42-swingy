@@ -31,6 +31,8 @@ public class App {
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
+
                 if (CurrentDisplay.getMode().equals(Mode.GUI)) {
                     Swingy.getInstance().getUi().show();
                     Swingy.getInstance().runOnce();
