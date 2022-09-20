@@ -129,7 +129,8 @@ public class Fight extends View implements ActionListener {
                 dispatch("continue");
             }
         } else {
-            waitGoBack("Press enter to go back to the main menu");
+            waitAndIgnore("Press enter to go back to the main menu");
+            dispatch("home");
         }
     }
 }

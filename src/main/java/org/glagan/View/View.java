@@ -57,6 +57,10 @@ abstract public class View {
         return dispatch("continue");
     }
 
+    protected void waitAndIgnore(String message) {
+        Input.ask(null, message != null ? message : "Press enter to go back");
+    }
+
     protected JPanel renderArtefactGui(Artefact artefact) {
         JPanel artefactPanel = new JPanel(new MigLayout("fillx, align center, insets 0"));
         artefactPanel.add(
