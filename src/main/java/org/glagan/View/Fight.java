@@ -122,6 +122,8 @@ public class Fight extends View implements ActionListener {
         if (report.getWinner().equals(FightCharacter.PLAYER)) {
             if (!report.hasDrop()) {
                 waitGoBack("Press enter to go back");
+            } else {
+                dispatch("continue");
             }
         } else {
             waitGoBack("Press enter to go back to the main menu");

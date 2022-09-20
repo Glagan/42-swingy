@@ -6,8 +6,7 @@ import org.glagan.Core.FightReport;
 import org.glagan.Core.Game;
 import org.glagan.View.Encounter;
 import org.glagan.View.Fight;
-import org.glagan.View.RunFailure;
-import org.glagan.View.RunSuccess;
+import org.glagan.View.Run;
 
 public class FightController extends Controller {
     public FightController(org.glagan.Core.Swingy swingy) {
@@ -39,11 +38,9 @@ public class FightController extends Controller {
             if (runSuccess) {
                 game.setCurrentEnemy(null);
                 game.save();
-                new RunSuccess(this).render();
-                swingy.useGameController();
+                new Run(this, true).render();
             } else {
-                new RunFailure(this).render();
-                fightEnemy();
+                new Run(this, false).render();
             }
             return true;
         } else if (event.equalsIgnoreCase("continue")) {

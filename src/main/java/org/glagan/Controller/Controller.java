@@ -22,7 +22,7 @@ abstract public class Controller {
      */
     protected final boolean handleGlobalCommand(String input) {
         if (input == null) {
-            return false;
+            return true;
         }
         if (input.equalsIgnoreCase("h") || input.equalsIgnoreCase("help")) {
             new Help(this).render();
