@@ -1,5 +1,9 @@
 package org.glagan.View;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.plaf.ColorUIResource;
+
 import org.glagan.Artefact.Artefact;
 import org.glagan.Controller.Controller;
 import org.glagan.Core.Caracteristics;
@@ -8,6 +12,8 @@ import org.glagan.Display.CurrentDisplay;
 import org.glagan.Display.Mode;
 
 import com.github.tomaslanger.chalk.Chalk;
+
+import net.miginfocom.swing.MigLayout;
 
 abstract public class View {
     protected Controller controller;
@@ -51,7 +57,64 @@ abstract public class View {
         return dispatch("continue");
     }
 
-    protected void printArtefact(Artefact artefact) {
+    protected JPanel renderArtefactGui(Artefact artefact) {
+        JPanel artefactPanel = new JPanel(new MigLayout("fillx, align center, insets 0"));
+        artefactPanel.add(new JLabel(artefact.getName()), "span, center, wrap");
+        JLabel artefactSlot = new JLabel();
+        switch (artefact.getSlot()) {
+            case HELM:
+                artefactSlot.setText("Helmet");
+                break;
+            case ARMOR:
+                artefactSlot.setText("Armor");
+                break;
+            case WEAPON:
+                artefactSlot.setText("Weapon");
+                break;
+        }
+        artefactPanel.add(artefactSlot, "span, center, wrap");
+
+        JPanel caracteristicsPanel = new JPanel(new MigLayout("insets 0"));
+        Caracteristics bonuses = artefact.getBonuses();
+        if (bonuses.getAttack() != 0) {
+            JPanel attackPanel = new JPanel(new MigLayout("fillx, insets 0"));
+            if (bonuses.getAttack() > 0) {
+                attackPanel.add(new JLabel("+"));
+            }
+            JLabel attack = new JLabel("" + bonuses.getAttack());
+            attack.setForeground(new ColorUIResource(66, 200, 66));
+            attackPanel.add(attack);
+            attackPanel.add(new JLabel(" attack"));
+            caracteristicsPanel.add(attackPanel, "span, wrap");
+        }
+        if (bonuses.getDefense() != 0) {
+            JPanel defensePanel = new JPanel(new MigLayout("fillx, insets 0"));
+            if (bonuses.getDefense() > 0) {
+                defensePanel.add(new JLabel("+"));
+            }
+            JLabel defense = new JLabel("" + bonuses.getDefense());
+            defense.setForeground(new ColorUIResource(66, 200, 66));
+            defensePanel.add(defense);
+            defensePanel.add(new JLabel(" defense"));
+            caracteristicsPanel.add(defensePanel, "span, wrap");
+        }
+        if (bonuses.getHitPoints() != 0) {
+            JPanel hpPanel = new JPanel(new MigLayout("fillx, insets 0"));
+            if (bonuses.getHitPoints() > 0) {
+                hpPanel.add(new JLabel("+"));
+            }
+            JLabel hitpoints = new JLabel("" + bonuses.getHitPoints());
+            hitpoints.setForeground(new ColorUIResource(66, 200, 66));
+            hpPanel.add(hitpoints);
+            hpPanel.add(new JLabel(" hp"));
+            caracteristicsPanel.add(hpPanel, "span, wrap");
+        }
+        artefactPanel.add(caracteristicsPanel, "span, wrap, center");
+
+        return artefactPanel;
+    }
+
+    protected void printArtefactConsole(Artefact artefact) {
         switch (artefact.getSlot()) {
             case HELM:
                 System.out.print("Helmet\t");

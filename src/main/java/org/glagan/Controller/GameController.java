@@ -47,6 +47,9 @@ public class GameController extends Controller {
         }
         Game game = swingy.getGame();
         if (event.equalsIgnoreCase("s") || event.equalsIgnoreCase("show")) {
+            if (CurrentDisplay.getMode().equals(Mode.GUI)) {
+                new Map(this, game.getMap(), game.getHero()).render();
+            }
             return true;
         } else if (event.equalsIgnoreCase("i") || event.equalsIgnoreCase("inventory")) {
             new Inventory(this, game.getMap(), game.getHero()).render();
@@ -90,10 +93,17 @@ public class GameController extends Controller {
             game.getHero().equipArtefact(game.getEnemyDrop());
             game.setEnemyDrop(null);
             game.save();
+            if (CurrentDisplay.getMode().equals(Mode.GUI)) {
+                new Map(this, game.getMap(), game.getHero()).render();
+            }
             return true;
         } else if (event.equalsIgnoreCase("l") || event.equalsIgnoreCase("leave")) {
             game.setEnemyDrop(null);
             game.save();
+            if (CurrentDisplay.getMode().equals(Mode.GUI)) {
+                new Map(this, game.getMap(), game.getHero()).render();
+            }
+            return true;
         } else if (event.equalsIgnoreCase("inventory")) {
             return true;
         } else {

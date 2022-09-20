@@ -14,15 +14,17 @@ import net.miginfocom.swing.MigLayout;
 
 public class Start extends View implements ActionListener {
     static protected String[] guiIntroduction = {
-            "You are now in GUI mode, you can switch to Console mode at any moment by clicking on the Console button.",
-            "If you need help you can press the help button at any moment.",
+            "You are now in GUI mode, you can switch to Console mode by",
+            "going in the View menu and selecting the Console item.",
+            "You can also quit the game or go back to the hero selection",
+            "trough the menu.",
             "Enjoy the game !"
     };
 
     static protected String[] consoleIntroduction = {
             "You are now in Console mode, you can switch to GUI mode at any moment by typing `set-display gui`.",
             "A few global commands are available when you are prompted for a command:",
-            "set-display, [h]elp, home, quit",
+            "set-display {gui}, [h]elp, home, quit",
             "The other commands available to you are displayed above the prompt.",
             "Enjoy the game !"
     };

@@ -2,7 +2,6 @@ package org.glagan.Controller;
 
 import java.util.Random;
 
-import org.glagan.Core.FightCharacter;
 import org.glagan.Core.FightReport;
 import org.glagan.Core.Game;
 import org.glagan.View.Encounter;
@@ -23,12 +22,6 @@ public class FightController extends Controller {
         Game game = swingy.getGame();
         FightReport report = game.fightEnemy();
         new Fight(this, report, game.getHero()).render();
-
-        if (report.getWinner().equals(FightCharacter.PLAYER)) {
-            swingy.useGameController();
-        } else {
-            swingy.useStartController();
-        }
     }
 
     @Override
@@ -54,6 +47,7 @@ public class FightController extends Controller {
             }
             return true;
         } else if (event.equalsIgnoreCase("continue")) {
+            swingy.useGameController();
             return true;
         } else {
             System.out.println("Invalid command `" + event + "`");

@@ -126,14 +126,14 @@ public class Map extends View implements ActionListener {
         moveEast.setActionCommand("move east");
         moveEast.addActionListener(this);
         movePanel.add(moveEast);
-        actionsPanel.add(movePanel, "width 50%");
+        actionsPanel.add(movePanel, "width 50%, center");
 
-        JPanel rightPanel = new JPanel(new MigLayout("insets 0, fillx, center"));
+        JPanel rightPanel = new JPanel(new MigLayout("fillx, center, insets 0"));
         JButton showInventory = new JButton("Inventory");
         showInventory.setActionCommand("inventory");
         showInventory.addActionListener(this);
         rightPanel.add(showInventory, "span, center");
-        actionsPanel.add(rightPanel, "width 50%, grow, center");
+        actionsPanel.add(rightPanel, "width 50%, center");
 
         panel.add(actionsPanel);
 

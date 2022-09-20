@@ -51,7 +51,7 @@ public class EnemyGenerator {
         if (level == 1) {
             statsPool += 8;
         } else {
-            statsPool += (level - 1) * 14;
+            statsPool += (level - 1) * 20;
         }
         Caracteristics caracteristics = new Caracteristics(1, 1, 10);
         double statsVariance = rand.nextDouble();
