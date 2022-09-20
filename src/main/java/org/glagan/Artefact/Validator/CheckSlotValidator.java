@@ -20,12 +20,14 @@ public class CheckSlotValidator implements ConstraintValidator<CheckSlot, Artefa
             return true;
         }
 
-        boolean isValid = object.getSlot().equals(slot);
+        if (object.getSlot() == null) {
+            return false;
+        }
 
+        boolean isValid = object.getSlot().equals(slot);
         if (!isValid) {
             constraintContext.disableDefaultConstraintViolation();
-            constraintContext.buildConstraintViolationWithTemplate(
-                    "{org.glagan.Artefact.Validator.CheckSlot.message}")
+            constraintContext.buildConstraintViolationWithTemplate("contains an item that can't fit in this slot")
                     .addConstraintViolation();
         }
 

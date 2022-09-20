@@ -15,6 +15,8 @@ public class HeroSerializer implements JsonSerializer<Hero> {
         JsonElement element = src.serialize();
         if (element.isJsonObject()) {
             element.getAsJsonObject().add("type", new JsonPrimitive(src.getClass().getSimpleName()));
+            element.getAsJsonObject().remove("level");
+            element.getAsJsonObject().remove("baseCaracteristics");
             element.getAsJsonObject().remove("finalCaracteristics");
         }
         return element;

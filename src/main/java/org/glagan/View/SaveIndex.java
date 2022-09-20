@@ -43,11 +43,10 @@ public class SaveIndex extends View implements ListSelectionListener, ActionList
                 Save save = saves[list.getSelectedIndex()];
                 if (!save.isCorrupted()) {
                     playButton.setEnabled(true);
-                    deleteButton.setEnabled(true);
                 } else {
                     playButton.setEnabled(false);
-                    deleteButton.setEnabled(false);
                 }
+                deleteButton.setEnabled(true);
             }
         }
     }

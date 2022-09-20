@@ -6,6 +6,7 @@ import org.glagan.Artefact.Validator.CheckSlot;
 import org.glagan.Core.Caracteristics;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Direction;
+import org.hibernate.validator.constraints.Length;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -17,6 +18,7 @@ import jakarta.validation.constraints.NotNull;
 
 public abstract class Hero {
     @NotNull
+    @Length(min = 1, max = 20)
     protected String name;
 
     @Min(1)

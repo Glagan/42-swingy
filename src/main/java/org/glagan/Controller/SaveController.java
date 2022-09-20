@@ -52,9 +52,17 @@ public class SaveController extends Controller {
                     ConstraintViolation<Game> nextError = constraintViolations.iterator().next();
                     saves[index] = new Save(path, game, true,
                             "Validation failed: " + nextError.getPropertyPath() + " " + nextError.getMessage());
-                } else if (game.getMap() != null && !game.getMap().validateLocations()) {
-                    saves[index] = new Save(path, game, true, "The map doesn't have valid locations for it's size");
-                } else {
+                } else if (game.getMap() != null) {
+                    if (!game.getMap().validateLocations()) {
+                        saves[index] = new Save(path, game, true, "The map doesn't have valid locations for it's size");
+                    } else if (game.getHero().getPosition() == null) {
+                        saves[index] = new Save(path, game, true, "The hero is not in the map");
+                    } else if (game.getHero().getPosition().getX() >= game.getMap().getSize()
+                            || game.getHero().getPosition().getY() >= game.getMap().getSize()) {
+                        saves[index] = new Save(path, game, true, "The hero is outside of the map");
+                    }
+                }
+                if (saves[index] == null) {
                     saves[index] = new Save(path, game, false, null);
                 }
             } catch (FileNotFoundException e) {
@@ -149,6 +157,9 @@ public class SaveController extends Controller {
         } else if (event.startsWith("set-name ")) {
             String[] split = event.split(" ");
             if (split.length != 2) {
+                return false;
+            }
+            if (split[1].length() < 1 || split[1].length() > 20) {
                 return false;
             }
             heroName = split[1];
