@@ -114,7 +114,60 @@ abstract public class View {
         return artefactPanel;
     }
 
+    protected String bonusString(int value, String prefix) {
+        if (value != 0) {
+            String out;
+            if (value > 0) {
+                out = "+" + value;
+            } else {
+                out = "" + value;
+            }
+            out = out + " " + prefix;
+            return out;
+        }
+        return null;
+    }
+
+    protected void printSeparator(int length) {
+        System.out.print("\t├");
+        for (int i = 0; i < length + 2; i++) {
+            System.out.print("─");
+        }
+        System.out.println("┤");
+    }
+
     protected void printArtefactConsole(Artefact artefact) {
+        Caracteristics bonuses = artefact.getBonuses();
+        String attackBonus = bonusString(bonuses.getAttack(), "attack");
+        String defenseBonus = bonusString(bonuses.getDefense(), "defense");
+        String hpBonus = bonusString(bonuses.getHitPoints(), "hp");
+        String fullName = artefact.getName();
+        int fullNameDisplayLength = fullName.length();
+        switch (artefact.getRarity()) {
+            case LEGENDARY:
+                fullName = fullName + " (" + Chalk.on("Legendary").yellow() + ")";
+                fullNameDisplayLength += 12;
+                break;
+            case RARE:
+                fullName = fullName + " (" + Chalk.on("Rare").cyan() + ")";
+                fullNameDisplayLength += 7;
+                break;
+            case COMMON:
+                fullName = fullName + " (Common)";
+                fullNameDisplayLength += 9;
+                break;
+        }
+        int longestString = fullNameDisplayLength;
+        if (attackBonus != null) {
+            longestString = Math.max(longestString, attackBonus.length());
+        }
+        if (defenseBonus != null) {
+            longestString = Math.max(longestString, defenseBonus.length());
+        }
+        if (hpBonus != null) {
+            longestString = Math.max(longestString, hpBonus.length());
+        }
+
         switch (artefact.getSlot()) {
             case HELM:
                 System.out.print("Helmet\t");
@@ -126,54 +179,31 @@ abstract public class View {
                 System.out.print("Weapon\t");
                 break;
         }
-        System.out.print(Chalk.on(artefact.getName()).underline() + " ");
-        switch (artefact.getRarity()) {
-            case LEGENDARY:
-                System.out.println("(" + Chalk.on("Legendary").yellow() + ")");
-                break;
-            case RARE:
-                System.out.println("(" + Chalk.on("Rare").cyan() + ")");
-                break;
-            case COMMON:
-                System.out.println("(Common)");
-                break;
+
+        System.out.print("╭");
+        for (int i = 0; i < longestString + 2; i++) {
+            System.out.print("─");
         }
-        System.out.print("\t");
-        Caracteristics bonuses = artefact.getBonuses();
-        boolean wrote = false;
-        if (bonuses.getAttack() != 0) {
-            if (bonuses.getAttack() > 0) {
-                System.out.print("+" + bonuses.getAttack());
-            } else {
-                System.out.print(bonuses.getAttack());
-            }
-            System.out.print(" attack");
-            wrote = true;
+        System.out.println("╮");
+        String fill = new String(new char[longestString - fullNameDisplayLength]).replace("\0", " ");
+        System.out.println("\t│ " + fullName + fill + " │");
+        printSeparator(longestString);
+        if (attackBonus != null) {
+            fill = new String(new char[longestString - attackBonus.length()]).replace("\0", " ");
+            System.out.println("\t│ " + attackBonus + fill + " │");
         }
-        if (bonuses.getDefense() != 0) {
-            if (wrote) {
-                System.out.print(", ");
-            }
-            if (bonuses.getDefense() > 0) {
-                System.out.print("+" + bonuses.getDefense());
-            } else {
-                System.out.print(bonuses.getDefense());
-            }
-            System.out.print(" defense");
-            wrote = true;
+        if (defenseBonus != null) {
+            fill = new String(new char[longestString - defenseBonus.length()]).replace("\0", " ");
+            System.out.println("\t│ " + defenseBonus + fill + " │");
         }
-        if (bonuses.getHitPoints() != 0) {
-            if (wrote) {
-                System.out.print(", ");
-            }
-            if (bonuses.getHitPoints() > 0) {
-                System.out.print("+" + bonuses.getHitPoints());
-            } else {
-                System.out.print(bonuses.getHitPoints());
-            }
-            System.out.print(" hp");
-            wrote = true;
+        if (hpBonus != null) {
+            fill = new String(new char[longestString - hpBonus.length()]).replace("\0", " ");
+            System.out.println("\t│ " + hpBonus + fill + " │");
         }
-        System.out.println();
+        System.out.print("\t╰");
+        for (int i = 0; i < longestString + 2; i++) {
+            System.out.print("─");
+        }
+        System.out.println("╯");
     }
 }
