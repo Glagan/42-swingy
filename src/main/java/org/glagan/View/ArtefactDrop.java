@@ -4,6 +4,7 @@ import org.glagan.Artefact.Artefact;
 import org.glagan.Character.Hero;
 import org.glagan.Controller.Controller;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -54,10 +55,12 @@ public class ArtefactDrop extends View implements ActionListener {
 
         JPanel actionPanel = new JPanel(new MigLayout("insets 0, fillx, center"));
         JButton equipButton = new JButton("Equip");
+        equipButton.setMnemonic(KeyEvent.VK_E);
         equipButton.setActionCommand("equip");
         equipButton.addActionListener(this);
         actionPanel.add(equipButton, "width 50%, center");
         JButton leaveButton = new JButton("Leave");
+        leaveButton.setMnemonic(KeyEvent.VK_L);
         leaveButton.setActionCommand("leave");
         leaveButton.addActionListener(this);
         actionPanel.add(leaveButton, "width 50%, center");

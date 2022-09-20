@@ -27,8 +27,6 @@ public class UI implements ActionListener {
             Swingy.getInstance().quit();
         } else if (action.equalsIgnoreCase("home")) {
             Swingy.getInstance().useSaveController();
-        } else if (action.equalsIgnoreCase("help")) {
-            // TODO Show the help
         }
     }
 
@@ -59,13 +57,6 @@ public class UI implements ActionListener {
         consoleMenuItem.setActionCommand("change-display");
         consoleMenuItem.addActionListener(this);
         viewMenu.add(consoleMenuItem);
-
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic(KeyEvent.VK_H);
-        helpMenu.getAccessibleContext().setAccessibleDescription("Show the help");
-        helpMenu.setActionCommand("help");
-        helpMenu.addActionListener(this);
-        menuBar.add(helpMenu);
 
         return menuBar;
     }

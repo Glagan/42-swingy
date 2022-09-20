@@ -79,6 +79,7 @@ public class Inventory extends View implements ActionListener {
         JButton backButton = new JButton("Back");
         backButton.setActionCommand("show");
         backButton.addActionListener(this);
+        backButton.requestFocusInWindow();
         actionPanel.add(backButton, "span, center");
         panel.add(actionPanel, "span, wrap, grow, center, gap 0");
 

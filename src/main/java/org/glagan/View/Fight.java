@@ -82,9 +82,11 @@ public class Fight extends View implements ActionListener {
                 panel.add(levelUpPanel, "span, wrap, gap 0");
             }
         } else {
-            panel.add(new JLabel("After a tough fight, you sadly didn't manage to win against your"), "span, wrap");
-            panel.add(new JLabel("opponent..."), "span, wrap");
-            panel.add(new JLabel("A bright white light shine above your body before it disappears."), "span, wrap");
+            panel.add(new JLabel(
+                    "<html>After a tough fight, you sadly didn't manage to win against your opponent...</html>"),
+                    "span, wrap");
+            panel.add(new JLabel("<html>A bright white light shine above your body before it disappears.</html>"),
+                    "span, wrap");
         }
 
         JPanel actionPanel = new JPanel(new MigLayout("fillx, align center, insets 0"));
@@ -92,6 +94,7 @@ public class Fight extends View implements ActionListener {
         JButton backButton = new JButton(playerWon ? "Back" : "Back to main menu");
         backButton.setActionCommand(playerWon ? "continue" : "home");
         backButton.addActionListener(this);
+        backButton.requestFocusInWindow();
         actionPanel.add(backButton, "span, center");
         panel.add(actionPanel, "span, wrap, grow, center, gap 0");
 

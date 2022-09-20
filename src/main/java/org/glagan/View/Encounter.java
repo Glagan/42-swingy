@@ -2,6 +2,7 @@ package org.glagan.View;
 
 import org.glagan.Controller.Controller;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -53,10 +54,13 @@ public class Encounter extends View implements ActionListener {
 
         JPanel actionPanel = new JPanel(new MigLayout("insets 0, fillx, center"));
         JButton fightButton = new JButton("Fight");
+        fightButton.setMnemonic(KeyEvent.VK_F);
         fightButton.setActionCommand("fight");
         fightButton.addActionListener(this);
+        fightButton.requestFocusInWindow();
         actionPanel.add(fightButton, "width 50%, center");
         JButton runButton = new JButton("Run");
+        runButton.setMnemonic(KeyEvent.VK_R);
         runButton.setActionCommand("run");
         runButton.addActionListener(this);
         actionPanel.add(runButton, "width 50%, center");

@@ -59,7 +59,9 @@ abstract public class View {
 
     protected JPanel renderArtefactGui(Artefact artefact) {
         JPanel artefactPanel = new JPanel(new MigLayout("fillx, align center, insets 0"));
-        artefactPanel.add(new JLabel(artefact.getName()), "span, center, wrap");
+        artefactPanel.add(
+                new JLabel("<html><body style=\"text-align: center;\">" + artefact.getName() + "</body></html>"),
+                "span, center, wrap");
         JLabel artefactSlot = new JLabel();
         switch (artefact.getSlot()) {
             case HELM:

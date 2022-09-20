@@ -39,6 +39,7 @@ public class Run extends View implements ActionListener {
             JButton backButton = new JButton("Back");
             backButton.setActionCommand("continue");
             backButton.addActionListener(this);
+            backButton.requestFocusInWindow();
             actionPanel.add(backButton, "span, center");
         } else {
             panel.add(new JLabel("You failed to run away from your opponent !"), "span, wrap, center");
@@ -46,6 +47,7 @@ public class Run extends View implements ActionListener {
             JButton fightButton = new JButton("Fight");
             fightButton.setActionCommand("fight");
             fightButton.addActionListener(this);
+            fightButton.requestFocusInWindow();
             actionPanel.add(fightButton, "span, center");
         }
         panel.add(actionPanel, "span, grow, center");

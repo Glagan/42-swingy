@@ -13,13 +13,12 @@ import org.glagan.Controller.Controller;
 import net.miginfocom.swing.MigLayout;
 
 public class Start extends View implements ActionListener {
-    static protected String[] guiIntroduction = {
-            "You are now in GUI mode, you can switch to Console mode by",
-            "going in the View menu and selecting the Console item.",
-            "You can also quit the game or go back to the hero selection",
-            "trough the menu.",
-            "Enjoy the game !"
-    };
+    static protected String guiIntroduction = "<html>You are now in GUI mode, you can switch to Console mode by going in the View menu and selecting the Console item.<br /><br />"
+            +
+            "You can also quit the game or go back to the hero selection trough the menu.<br /><br />" +
+            "The goal of the game is to survive !<br /><br />" +
+            "A new map is generated when you reach any border of your current map.<br /><br />" +
+            "Enjoy the game !";
 
     static protected String[] consoleIntroduction = {
             "You are now in Console mode, you can switch to GUI mode at any moment by typing `set-display gui`.",
@@ -46,10 +45,7 @@ public class Start extends View implements ActionListener {
         JPanel panel = new JPanel(new MigLayout("fillx"));
 
         panel.add(new JLabel("Welcome to Swingy !"), "span, wrap, center");
-
-        for (String line : guiIntroduction) {
-            panel.add(new JLabel(line), "span, wrap");
-        }
+        panel.add(new JLabel(guiIntroduction), "span, grow, wrap");
 
         JButton play = new JButton("Play");
         play.setMnemonic(KeyEvent.VK_P);
