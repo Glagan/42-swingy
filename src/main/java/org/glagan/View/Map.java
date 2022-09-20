@@ -1,6 +1,7 @@
 package org.glagan.View;
 
 import org.glagan.Character.Hero;
+import org.glagan.World.Biome;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Location;
 import org.glagan.World.SubMap;
@@ -76,7 +77,7 @@ public class Map extends View implements ActionListener {
                     } else {
                         square.setText(" ");
                     }
-                    square.setBackground(new ColorUIResource(66, 66, 200)); // TODO Set biome color
+                    Biome.setColors(location.getBiome(), square);
                 } else {
                     square.setText(" ");
                     square.setBackground(new ColorUIResource(0, 0, 0));
@@ -96,6 +97,7 @@ public class Map extends View implements ActionListener {
             JPanel row = new JPanel(new GridLayout(1, 15));
             for (int y = 0; y < SubMap.ySize; y++) {
                 locationLabels[x][y] = new JLabel();
+                locationLabels[x][y].setHorizontalAlignment(JLabel.CENTER);
                 locationLabels[x][y].setOpaque(true);
                 locationLabels[x][y].setMinimumSize(new DimensionUIResource(32, 32));
                 row.add(locationLabels[x][y]);
