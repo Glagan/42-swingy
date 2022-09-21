@@ -78,8 +78,8 @@ public class ArtefactGenerator {
 
     protected Caracteristics bonuses(int level, ArtefactSlot slot, Rarity rarity) {
         Caracteristics caracteristics = new Caracteristics(0, 0, 0);
-        int rarityBonus = rarity.equals(Rarity.LEGENDARY) ? 12 : rarity.equals(Rarity.RARE) ? 6 : 0;
-        int statsPool = (level - 1) * 4 + 9 + rarityBonus;
+        int rarityBonus = rarity.equals(Rarity.LEGENDARY) ? 10 : rarity.equals(Rarity.RARE) ? 4 : 0;
+        int statsPool = (level - 1) * 3 + 9 + rarityBonus;
         if (slot.equals(ArtefactSlot.HELM)) {
             int hitPoints = rand.nextInt((int) (statsPool * 0.8));
             statsPool -= hitPoints;
