@@ -47,26 +47,47 @@ public class GameController extends Controller {
         }
         Game game = swingy.getGame();
         if (event.equalsIgnoreCase("s") || event.equalsIgnoreCase("show")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             if (CurrentDisplay.getMode().equals(Mode.GUI)) {
                 new Map(this, game.getMap(), game.getHero()).render();
             }
             return true;
         } else if (event.equalsIgnoreCase("i") || event.equalsIgnoreCase("inventory")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             new Inventory(this, game.getMap(), game.getHero()).render();
             return true;
         } else if (event.equalsIgnoreCase("mn")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             moveHeroInDirection(Direction.NORTH);
             return true;
         } else if (event.equalsIgnoreCase("me")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             moveHeroInDirection(Direction.EAST);
             return true;
         } else if (event.equalsIgnoreCase("ms")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             moveHeroInDirection(Direction.SOUTH);
             return true;
         } else if (event.equalsIgnoreCase("mw")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             moveHeroInDirection(Direction.WEST);
             return true;
         } else if (event.startsWith("m ") || event.startsWith("move ")) {
+            if (game.getEnemyDrop() != null) {
+                return false;
+            }
             String[] parts = event.split(" ");
             if (parts.length != 2) {
                 System.out.println("Invalid command `" + event + "`");
@@ -90,6 +111,9 @@ public class GameController extends Controller {
                 }
             }
         } else if (event.equalsIgnoreCase("e") || event.equalsIgnoreCase("equip")) {
+            if (game.getEnemyDrop() == null) {
+                return false;
+            }
             game.getHero().equipArtefact(game.getEnemyDrop());
             game.setEnemyDrop(null);
             game.save();
@@ -98,13 +122,14 @@ public class GameController extends Controller {
             }
             return true;
         } else if (event.equalsIgnoreCase("l") || event.equalsIgnoreCase("leave")) {
+            if (game.getEnemyDrop() == null) {
+                return false;
+            }
             game.setEnemyDrop(null);
             game.save();
             if (CurrentDisplay.getMode().equals(Mode.GUI)) {
                 new Map(this, game.getMap(), game.getHero()).render();
             }
-            return true;
-        } else if (event.equalsIgnoreCase("inventory")) {
             return true;
         } else {
             System.out.println("Invalid command `" + event + "`");
