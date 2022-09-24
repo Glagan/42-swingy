@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -287,6 +288,19 @@ public class Game {
     }
 
     protected void saveHero(Connection connection) throws SQLException {
+        // Check that the ID is valid
+        if (id > 0) {
+            String sql = "SELECT id FROM heroes WHERE id = ? LIMIT 1";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            // If there is no results the ID is invalid and we will create a new entry
+            if (!resultSet.next()) {
+                id = 0;
+                id = Optional.of(resultSet.getInt(1)).get();
+            }
+        }
+
         String sql = null;
         boolean insert = false;
         if (id > 0) {
@@ -416,6 +430,167 @@ public class Game {
         }
     }
 
+    public void saveMap(Connection connection) throws SQLException {
+        // Delete the map if there is none currently
+        if (map == null) {
+            String sql = "DELETE FROM hero_map WHERE hero_id = ?";
+            PreparedStatement deleteStatement = connection.prepareStatement(sql);
+            deleteStatement.setInt(1, id);
+            deleteStatement.executeUpdate();
+            return;
+        }
+
+        // Check if a map exists
+        int mapId = 0;
+        String sql = "SELECT id, level, size FROM hero_map WHERE hero_id = ? LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        // If there is no results the ID is invalid and we will create a new entry
+        boolean maybeHasLocations = false;
+        if (resultSet.next()) {
+            mapId = resultSet.getInt("id");
+            if (resultSet.getInt("level") != map.getLevel() || resultSet.getInt("size") != map.getSize()) {
+                // If the level or size doesn't match, update them
+                sql = "UPDATE hero_map SET level = ?, size = ? WHERE id = ?";
+                PreparedStatement updateStatement = connection.prepareStatement(sql);
+                updateStatement.setInt(1, map.getLevel());
+                updateStatement.setInt(2, map.getSize());
+                updateStatement.setLong(3, mapId);
+                updateStatement.executeUpdate();
+                // -- and delete all locations
+                sql = "DELETE FROM hero_map_locations WHERE hero_map_id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(sql);
+                deleteStatement.setInt(1, mapId);
+                deleteStatement.executeUpdate();
+            } else {
+                maybeHasLocations = true;
+            }
+        } else {
+            sql = "INSERT INTO hero_map(hero_id, level, size) VALUES (?, ?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            insertStatement.setInt(1, id);
+            insertStatement.setInt(2, map.getLevel());
+            insertStatement.setInt(3, map.getSize());
+            int inserted = insertStatement.executeUpdate();
+            if (inserted > 0) {
+                try (ResultSet insertSet = insertStatement.getGeneratedKeys()) {
+                    if (insertSet.next()) {
+                        mapId = Optional.of(insertSet.getInt(1)).get();
+                    }
+                }
+            }
+        }
+
+        // Check if the locations already exists to update them instead of re-creating
+        Location[] existingLocations = null;
+        Integer[] existingLocationIds = null;
+        if (maybeHasLocations) {
+            // Load and parse all locations
+            sql = "SELECT id, x, y, biome, enemies_visible, visible FROM hero_map_locations WHERE hero_map_id = ? ORDER BY x, y";
+            PreparedStatement selectStatement = connection.prepareStatement(sql);
+            selectStatement.setInt(1, mapId);
+            ResultSet locationsSet = selectStatement.executeQuery();
+            List<Location> locations = new ArrayList<>();
+            List<Integer> locationIds = new ArrayList<>();
+            boolean deleteLocations = false;
+            while (locationsSet.next()) {
+                Location location = Location.fromResultSet(locationsSet);
+                if (location == null) {
+                    deleteLocations = true;
+                    break;
+                } else {
+                    locations.add(location);
+                    locationIds.add(locationsSet.getInt("id"));
+                }
+            }
+
+            // Validate locations
+            if (locations.size() != (map.getSize() * map.getSize())) {
+                deleteLocations = true;
+            } else {
+                for (int x = 0; x < map.getSize(); x++) {
+                    for (int y = 0; y < map.getSize(); y++) {
+                        Location location = locations.get(x * map.getSize() + y);
+                        if (location.getX() != x || location.getY() != y) {
+                            deleteLocations = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Delete them if they are invalid
+            if (deleteLocations) {
+                sql = "DELETE FROM hero_map_locations WHERE hero_map_id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(sql);
+                deleteStatement.setInt(1, mapId);
+                deleteStatement.executeUpdate();
+                return;
+            } else {
+                existingLocations = locations.toArray(new Location[locations.size()]);
+                existingLocationIds = locationIds.toArray(new Integer[locationIds.size()]);
+            }
+        }
+
+        // Save the map locations
+        int index = 0;
+        for (Location[] row : map.getLocations()) {
+            for (Location location : row) {
+                int locationId = 0;
+                if (existingLocations != null) {
+                    locationId = existingLocationIds[index];
+                    sql = "UPDATE hero_map_locations SET biome = ?, enemies_visible = ?, visible = ? WHERE id = ?";
+                    PreparedStatement updateStatement = connection.prepareStatement(sql,
+                            Statement.RETURN_GENERATED_KEYS);
+                    updateStatement.setString(1, location.getBiome().toString());
+                    updateStatement.setBoolean(2, location.isEnemiesAreVisible());
+                    updateStatement.setBoolean(3, location.isVisible());
+                    updateStatement.setInt(4, locationId);
+                    updateStatement.executeUpdate();
+                } else {
+                    sql = "INSERT INTO hero_map_locations(hero_map_id, x, y, biome, enemies_visible, visible) VALUES (?, ?, ?, ?, ?, ?)";
+                    PreparedStatement insertStatement = connection.prepareStatement(sql,
+                            Statement.RETURN_GENERATED_KEYS);
+                    insertStatement.setInt(1, mapId);
+                    insertStatement.setInt(2, location.getX());
+                    insertStatement.setInt(3, location.getY());
+                    insertStatement.setString(4, location.getBiome().toString());
+                    insertStatement.setBoolean(5, location.isEnemiesAreVisible());
+                    insertStatement.setBoolean(6, location.isVisible());
+                    int inserted = insertStatement.executeUpdate();
+                    if (inserted > 0) {
+                        try (ResultSet insertSet = insertStatement.getGeneratedKeys()) {
+                            if (insertSet.next()) {
+                                locationId = Optional.of(insertSet.getInt(1)).get();
+                            }
+                        }
+                    }
+                }
+                if (location.hasEnemies()) {
+                    Enemy enemy = location.getEnemies()[0];
+                    sql = "INSERT INTO hero_map_location_enemies(hero_map_location_id, name, rank, level, attack, defense, hitpoints) VALUES (?, ?, ?, ?, ?, ?, ?) "
+                            + "ON CONFLICT (hero_map_location_id) DO UPDATE SET name = excluded.name, rank = excluded.rank, level = excluded.level, attack = excluded.attack, defense = excluded.defense, hitpoints = excluded.hitpoints";
+                    PreparedStatement insertStatement = connection.prepareStatement(sql);
+                    insertStatement.setInt(1, locationId);
+                    insertStatement.setString(2, enemy.getName());
+                    insertStatement.setString(3, enemy.getRank().toString());
+                    insertStatement.setInt(4, enemy.getLevel());
+                    insertStatement.setInt(5, enemy.getCaracteristics().getAttack());
+                    insertStatement.setInt(6, enemy.getCaracteristics().getDefense());
+                    insertStatement.setInt(7, enemy.getCaracteristics().getHitPoints());
+                    insertStatement.executeUpdate();
+                } else {
+                    sql = "DELETE FROM hero_map_location_enemies WHERE hero_map_location_id = ?";
+                    PreparedStatement deleteStatement = connection.prepareStatement(sql);
+                    deleteStatement.setInt(1, locationId);
+                    deleteStatement.executeUpdate();
+                }
+                index += 1;
+            }
+        }
+    }
+
     public boolean save(boolean... forceSave) {
         Database database = Swingy.getInstance().getDatabase();
         if (database != null && database.isConnected()) {
@@ -429,11 +604,13 @@ public class Game {
                 saveCurrentEnemy(connection);
                 saveCurrentDrop(connection);
 
-                // TODO save Map
+                // Save Map
+                saveMap(connection);
 
                 return true;
             } catch (SQLException e) {
                 System.out.println("\u001B[31mFailed to save to the database: \u001B[0m" + e.getMessage());
+                e.printStackTrace();
                 Swingy.getInstance().closeDatabase();
             }
             if (forceSave.length > 0 && forceSave[0]) {

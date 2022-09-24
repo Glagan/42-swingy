@@ -1,5 +1,8 @@
 package org.glagan.World;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.glagan.Character.Enemy;
 
 import com.github.tomaslanger.chalk.Chalk;
@@ -81,5 +84,24 @@ public class Location {
 
     public void setEnemiesVisibility(boolean visible) {
         enemiesAreVisible = visible;
+    }
+
+    public static Location fromResultSet(ResultSet set) throws SQLException {
+        int x = set.getInt("x");
+        int y = set.getInt("y");
+        String stringBiome = set.getString("biome");
+        Biome parsedBiome = null;
+        for (Biome biome : Biome.values()) {
+            if (biome.toString().equals(stringBiome)) {
+                parsedBiome = biome;
+                break;
+            }
+        }
+        if (parsedBiome == null) {
+            return null;
+        }
+        boolean enemiesAreVisible = set.getBoolean("enemies_visible");
+        boolean isVisible = set.getBoolean("visible");
+        return new Location(x, y, parsedBiome, null, enemiesAreVisible, isVisible);
     }
 }
