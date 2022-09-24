@@ -17,6 +17,7 @@ import java.util.Random;
 import org.glagan.Adapters.GsonCustomBuilder;
 import org.glagan.Artefact.Artefact;
 import org.glagan.Artefact.ArtefactGenerator;
+import org.glagan.Artefact.ArtefactSlot;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
 import org.glagan.World.Coordinates;
@@ -73,6 +74,10 @@ public class Game {
 
     public void setSavePath(String path) {
         this.savePath = path;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Hero getHero() {
@@ -281,39 +286,150 @@ public class Game {
         return gson.fromJson(reader, Game.class);
     }
 
+    protected void saveHero(Connection connection) throws SQLException {
+        String sql = null;
+        boolean insert = false;
+        if (id > 0) {
+            sql = "UPDATE heroes SET name = ?, save_path = ?, experience = ?, class = ? WHERE id = ?";
+        } else {
+            sql = "INSERT INTO heroes(name, save_path, experience, class) VALUES (?, ?, ?, ?)";
+            insert = true;
+        }
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, hero.getName());
+        statement.setString(2, savePath);
+        statement.setLong(3, hero.getExperience());
+        statement.setString(4, hero.className());
+        if (!insert) {
+            statement.setInt(5, id);
+        }
+
+        int inserted = statement.executeUpdate();
+        if (insert) {
+            if (inserted > 0) {
+                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                    if (resultSet.next()) {
+                        id = Optional.of(resultSet.getInt(1)).get();
+                    }
+                }
+            }
+        }
+    }
+
+    protected void saveHeroArtefact(Connection connection, ArtefactSlot slot) throws SQLException {
+        Artefact artefact = hero.getArtefactInSlot(slot);
+        if (artefact == null) {
+            String sql = "DELETE FROM hero_artefacts WHERE slot = ? AND hero_id = ?";
+            PreparedStatement deleteStatement = connection.prepareStatement(sql);
+            deleteStatement.setString(1, slot.toString());
+            deleteStatement.setInt(2, id);
+            deleteStatement.executeUpdate();
+            return;
+        }
+
+        String sql = "SELECT id FROM hero_artefacts WHERE hero_id = ? AND slot = ? LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        statement.setString(2, slot.toString());
+
+        int artefactId = 0;
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            artefactId = resultSet.getInt("id");
+        }
+
+        if (artefactId > 0) {
+            sql = "UPDATE hero_artefacts SET name = ?, rarity = ?, attack = ?, defense = ?, hitpoints = ?, slot = ? WHERE id = ?";
+
+            PreparedStatement insertStatement = connection.prepareStatement(sql);
+            insertStatement.setString(1, artefact.getName());
+            insertStatement.setString(2, artefact.getRarity().toString());
+            insertStatement.setLong(3, artefact.getBonuses().getAttack());
+            insertStatement.setLong(4, artefact.getBonuses().getDefense());
+            insertStatement.setLong(5, artefact.getBonuses().getHitPoints());
+            insertStatement.setString(6, slot.toString());
+            insertStatement.setInt(7, artefactId);
+            insertStatement.executeUpdate();
+        } else {
+            sql = "INSERT INTO hero_artefacts(hero_id, name, rarity, attack, defense, hitpoints, slot) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            PreparedStatement insertStatement = connection.prepareStatement(sql);
+            insertStatement.setInt(1, id);
+            insertStatement.setString(2, artefact.getName());
+            insertStatement.setString(3, artefact.getRarity().toString());
+            insertStatement.setLong(4, artefact.getBonuses().getAttack());
+            insertStatement.setLong(5, artefact.getBonuses().getDefense());
+            insertStatement.setLong(6, artefact.getBonuses().getHitPoints());
+            insertStatement.setString(7, slot.toString());
+            insertStatement.executeUpdate();
+        }
+    }
+
+    protected void saveHeroArtefacts(Connection connection) throws SQLException {
+        saveHeroArtefact(connection, ArtefactSlot.HELM);
+        saveHeroArtefact(connection, ArtefactSlot.ARMOR);
+        saveHeroArtefact(connection, ArtefactSlot.WEAPON);
+    }
+
+    public void saveCurrentEnemy(Connection connection) throws SQLException {
+        String sql = "DELETE FROM hero_current_enemies WHERE hero_id = ?";
+        PreparedStatement deleteStatement = connection.prepareStatement(sql);
+        deleteStatement.setInt(1, id);
+        deleteStatement.executeUpdate();
+
+        if (currentEnemy != null) {
+            System.out.println("insert current enemy");
+            Enemy enemy = currentEnemy;
+            String insertSql = "INSERT INTO hero_current_enemies(hero_id, name, rank, level, attack, defense, hitpoints) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertSql);
+            insertStatement.setInt(1, id);
+            insertStatement.setString(2, enemy.getName());
+            insertStatement.setString(3, enemy.getRank().toString());
+            insertStatement.setInt(4, enemy.getLevel());
+            Caracteristics caracteristics = enemy.getCaracteristics();
+            insertStatement.setInt(5, caracteristics.getAttack());
+            insertStatement.setInt(6, caracteristics.getDefense());
+            insertStatement.setInt(7, caracteristics.getHitPoints());
+            insertStatement.executeUpdate();
+        }
+    }
+
+    public void saveCurrentDrop(Connection connection) throws SQLException {
+        String sql = "DELETE FROM hero_current_artefact WHERE hero_id = ?";
+        PreparedStatement deleteStatement = connection.prepareStatement(sql);
+        deleteStatement.setInt(1, id);
+        deleteStatement.executeUpdate();
+
+        if (enemyDrop != null) {
+            Artefact artefact = enemyDrop;
+            String insertSql = "INSERT INTO hero_current_artefact(hero_id, name, rarity, attack, defense, hitpoints, slot) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertSql);
+            insertStatement.setInt(1, id);
+            insertStatement.setString(2, artefact.getName());
+            insertStatement.setString(3, artefact.getRarity().toString());
+            Caracteristics caracteristics = artefact.getBonuses();
+            insertStatement.setInt(4, caracteristics.getAttack());
+            insertStatement.setInt(5, caracteristics.getDefense());
+            insertStatement.setInt(6, caracteristics.getHitPoints());
+            insertStatement.setString(7, artefact.getSlot().toString());
+            insertStatement.executeUpdate();
+        }
+    }
+
     public boolean save(boolean... forceSave) {
         Database database = Swingy.getInstance().getDatabase();
         if (database != null && database.isConnected()) {
             Connection connection = database.getConnection();
             try {
                 // Update main table
-                String heroSql = null;
-                boolean insert = false;
-                if (this.id > 0) {
-                    heroSql = "UPDATE heroes SET name = ?, save_path = ?, experience = ?, class = ? WHERE id = ?";
-                } else {
-                    heroSql = "INSERT INTO heroes(name, save_path, experience, class) VALUES (?, ?, ?, ?)";
-                    insert = true;
-                }
-                PreparedStatement statement = connection.prepareStatement(heroSql, Statement.RETURN_GENERATED_KEYS);
-                statement.setString(1, hero.getName());
-                statement.setString(2, savePath);
-                statement.setLong(3, hero.getExperience());
-                statement.setString(4, hero.className());
-                if (!insert) {
-                    statement.setInt(5, id);
-                }
+                saveHero(connection);
+                saveHeroArtefacts(connection);
 
-                int inserted = statement.executeUpdate();
-                if (insert) {
-                    if (inserted > 0) {
-                        try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                            if (resultSet.next()) {
-                                id = Optional.of(resultSet.getInt(1)).get();
-                            }
-                        }
-                    }
-                }
+                // Update "current" objects
+                saveCurrentEnemy(connection);
+                saveCurrentDrop(connection);
+
+                // TODO save Map
 
                 return true;
             } catch (SQLException e) {
@@ -336,6 +452,22 @@ public class Game {
         } else {
             System.out.println("Failed to save game, no save path was generated");
             return false;
+        }
+    }
+
+    public void delete() {
+        Database database = Swingy.getInstance().getDatabase();
+        if (database != null && database.isConnected()) {
+            Connection connection = database.getConnection();
+            try {
+                String sql = "DELETE FROM heroes WHERE id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(sql);
+                deleteStatement.setInt(1, id);
+                deleteStatement.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("\u001B[31mFailed to save to the database: \u001B[0m" + e.getMessage());
+                Swingy.getInstance().closeDatabase();
+            }
         }
     }
 }

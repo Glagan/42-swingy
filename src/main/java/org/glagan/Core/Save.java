@@ -60,8 +60,11 @@ public class Save {
     }
 
     public boolean delete() {
+        if (game.getId() > 0) {
+            game.delete(); // Delete from the database
+        }
         File file = new File(path);
-        return file.delete();
+        return file.delete(); // Delete the save file
     }
 
     static public boolean ensureSavesDirectoryExists() {
