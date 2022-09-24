@@ -15,6 +15,7 @@ public class Swingy {
     protected Game game;
     protected boolean playing;
     protected UI ui;
+    protected Database database;
 
     protected StartController startController;
     protected SaveController saveController;
@@ -31,6 +32,7 @@ public class Swingy {
         this.fightController = new FightController(this);
         this.activeController = this.startController;
         this.ui = new UI();
+        this.database = null;
     }
 
     public Game getGame() {
@@ -39,6 +41,21 @@ public class Swingy {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public Database getDatabase() {
+        return this.database;
+    }
+
+    public void setDatabase(Database database) {
+        this.database = database;
+    }
+
+    public void closeDatabase() {
+        if (database != null) {
+            database.close();
+            database = null;
+        }
     }
 
     public UI getUi() {

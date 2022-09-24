@@ -5,7 +5,13 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 
 import org.glagan.Adapters.GsonCustomBuilder;
@@ -24,9 +30,13 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public class Game {
+    @Min(0)
+    protected int id;
+
     @NotNull
     protected String savePath;
 
@@ -271,16 +281,61 @@ public class Game {
         return gson.fromJson(reader, Game.class);
     }
 
-    public void save() {
+    public boolean save(boolean... forceSave) {
+        Database database = Swingy.getInstance().getDatabase();
+        if (database != null && database.isConnected()) {
+            Connection connection = database.getConnection();
+            try {
+                // Update main table
+                String heroSql = null;
+                boolean insert = false;
+                if (this.id > 0) {
+                    heroSql = "UPDATE heroes SET name = ?, save_path = ?, experience = ?, class = ? WHERE id = ?";
+                } else {
+                    heroSql = "INSERT INTO heroes(name, save_path, experience, class) VALUES (?, ?, ?, ?)";
+                    insert = true;
+                }
+                PreparedStatement statement = connection.prepareStatement(heroSql, Statement.RETURN_GENERATED_KEYS);
+                statement.setString(1, hero.getName());
+                statement.setString(2, savePath);
+                statement.setLong(3, hero.getExperience());
+                statement.setString(4, hero.className());
+                if (!insert) {
+                    statement.setInt(5, id);
+                }
+
+                int inserted = statement.executeUpdate();
+                if (insert) {
+                    if (inserted > 0) {
+                        try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                            if (resultSet.next()) {
+                                id = Optional.of(resultSet.getInt(1)).get();
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            } catch (SQLException e) {
+                System.out.println("\u001B[31mFailed to save to the database: \u001B[0m" + e.getMessage());
+                Swingy.getInstance().closeDatabase();
+            }
+            if (forceSave.length > 0 && forceSave[0]) {
+                return false;
+            }
+        }
         if (savePath != null) {
             String content = this.serialize();
             try {
                 Files.write(Paths.get(savePath), content.getBytes());
+                return true;
             } catch (IOException e) {
                 System.out.println("Failed to save game: " + e.getMessage());
+                return false;
             }
         } else {
             System.out.println("Failed to save game, no save path was generated");
+            return false;
         }
     }
 }
