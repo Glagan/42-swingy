@@ -72,3 +72,5 @@ CREATE TABLE hero_map_location_enemies (
     hitpoints INTEGER NOT NULL,
     CONSTRAINT forein_key_hero_map_location_enemy FOREIGN KEY (hero_map_location_id) REFERENCES hero_map_locations(id) ON DELETE CASCADE
 );
+ALTER TABLE "hero_map_location_enemies"
+ADD CONSTRAINT "hero_map_location_enemies_hero_map_location_id" UNIQUE ("hero_map_location_id");
