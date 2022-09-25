@@ -3,7 +3,9 @@ CREATE TABLE heroes (
     name VARCHAR(255) NOT NULL,
     save_path VARCHAR(255) NOT NULL,
     experience INTEGER NOT NULL DEFAULT 0,
-    class VARCHAR(255) NOT NULL
+    class VARCHAR(255) NOT NULL,
+    x INTEGER NOT NULL,
+    y INTEGER NOT NULL
 );
 
 CREATE TABLE hero_current_artefact (
@@ -46,6 +48,7 @@ CREATE TABLE hero_artefacts (
 CREATE TABLE hero_map (
     id BIGSERIAL PRIMARY KEY,
     hero_id INTEGER NOT NULL,
+    name VARCHAR(255) NOT NULL,
     level INTEGER NOT NULL,
     size INTEGER NOT NULL,
     CONSTRAINT forein_key_hero_map FOREIGN KEY (hero_id) REFERENCES heroes(id) ON DELETE CASCADE
