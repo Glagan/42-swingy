@@ -47,7 +47,7 @@ public class Database {
 
     public boolean isConnected() {
         try {
-            return !connection.isClosed();
+            return connection != null && !connection.isClosed();
         } catch (SQLException e) {
             return false;
         }

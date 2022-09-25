@@ -375,12 +375,23 @@ public class Game {
                 selectStatement.setInt(1, mapId);
                 ResultSet locationsSet = selectStatement.executeQuery();
                 while (locationsSet.next()) {
+                    int locationId = locationsSet.getInt("id");
                     Location location = Location.fromResultSet(locationsSet);
                     if (location == null) {
                         invalid = true;
                         break;
                     } else {
-                        // TODO load enemies
+                        sql = "SELECT name, rank, level, attack, defense, hitpoints FROM hero_map_location_enemies WHERE hero_map_location_id = ? LIMIT 1";
+                        PreparedStatement enemyStatement = connection.prepareStatement(sql);
+                        enemyStatement.setInt(1, locationId);
+                        ResultSet enemySet = enemyStatement.executeQuery();
+                        if (enemySet.next()) {
+                            Enemy enemy = Enemy.fromResultSet(enemySet);
+                            if (enemy != null) {
+                                Enemy[] enemies = { enemy };
+                                location.setEnemies(enemies);
+                            }
+                        }
                         locations.add(location);
                     }
                 }
