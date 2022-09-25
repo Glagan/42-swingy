@@ -153,7 +153,7 @@ public class Map extends View implements ActionListener {
         System.out.println();
         System.out.print("┌");
         for (int i = 0; i < SubMap.ySize; i++) {
-            if (heroPosition.getX() == 0 && heroPosition.getY() == i) {
+            if (heroPosition.getX() == 0) {
                 System.out.print("╨");
             } else {
                 System.out.print("─");
@@ -162,7 +162,7 @@ public class Map extends View implements ActionListener {
         System.out.println("┐");
 
         for (int x = 0; x < SubMap.xSize; x++) {
-            if (heroPosition.getY() == 0 && heroPosition.getX() == x) {
+            if (heroPosition.getY() == 0) {
                 System.out.print("╡");
             } else {
                 System.out.print("│");
@@ -188,7 +188,7 @@ public class Map extends View implements ActionListener {
                     System.out.print(" ");
                 }
             }
-            if (heroPosition.getY() == size - 1 && heroPosition.getX() == x) {
+            if (heroPosition.getY() == size - 1) {
                 System.out.println("╞");
             } else {
                 System.out.println("│");
@@ -197,7 +197,7 @@ public class Map extends View implements ActionListener {
 
         System.out.print("└");
         for (int i = 0; i < SubMap.ySize; i++) {
-            if (heroPosition.getX() == size - 1 && heroPosition.getY() == i) {
+            if (heroPosition.getX() == size - 1) {
                 System.out.print("╥");
             } else {
                 System.out.print("─");

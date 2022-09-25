@@ -103,6 +103,11 @@ public class App {
             System.exit(1);
         }
 
+        // Ensure the saves directory exists
+        if (!Save.ensureSavesDirectoryExists()) {
+            return;
+        }
+
         // Create the Database and run the blocking queue in a thread
         Database database = new Database();
         database.connect(databaseHost, databasePort, databaseUser, databasePassword, databaseName);
@@ -141,16 +146,11 @@ public class App {
                     }
 
                     // Delete save file -- it's exported to the database
-                    // file.delete();
+                    file.delete();
                 } catch (FileNotFoundException | JsonSyntaxException | JsonIOException e) {
                     // Ignore errors -- the saves will fallback to "file" saves and display an error
                 }
             }
-        }
-
-        // Ensure the saves directory exists
-        if (!Save.ensureSavesDirectoryExists()) {
-            return;
         }
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {

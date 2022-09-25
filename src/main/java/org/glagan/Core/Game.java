@@ -21,6 +21,7 @@ import org.glagan.Artefact.ArtefactGenerator;
 import org.glagan.Artefact.ArtefactSlot;
 import org.glagan.Character.Enemy;
 import org.glagan.Character.Hero;
+import org.glagan.Character.HeroFactory;
 import org.glagan.World.Coordinates;
 import org.glagan.World.Direction;
 import org.glagan.World.Location;
@@ -50,15 +51,15 @@ public class Game {
     protected Map map;
 
     @Valid
-    protected Artefact enemyDrop;
+    protected Artefact currentArtefact;
 
     @Valid
     protected Enemy currentEnemy;
 
-    public Game(Hero hero, Map map, Artefact enemyDrop, Enemy currentEnemy) {
+    public Game(Hero hero, Map map, Artefact currentArtefact, Enemy currentEnemy) {
         this.hero = hero;
         this.map = map;
-        this.enemyDrop = enemyDrop;
+        this.currentArtefact = currentArtefact;
         this.currentEnemy = currentEnemy;
     }
 
@@ -79,6 +80,14 @@ public class Game {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSavePath() {
+        return savePath;
     }
 
     public Hero getHero() {
@@ -183,12 +192,12 @@ public class Game {
         return false;
     }
 
-    public Artefact getEnemyDrop() {
-        return enemyDrop;
+    public Artefact getCurrentArtefact() {
+        return currentArtefact;
     }
 
-    public void setEnemyDrop(Artefact enemyDrop) {
-        this.enemyDrop = enemyDrop;
+    public void setEnemyDrop(Artefact currentArtefact) {
+        this.currentArtefact = currentArtefact;
     }
 
     public Enemy getCurrentEnemy() {
@@ -205,8 +214,9 @@ public class Game {
      * @param fromDirection
      */
     public void generateNewMap(Direction fromDirection) {
-        // Cleanup previous enemyDrop and currentEnemy if they were modified in the save
-        enemyDrop = null;
+        // Cleanup previous currentArtefact and currentEnemy if they were modified in
+        // the save
+        currentArtefact = null;
         currentEnemy = null;
         map = MapGenerator.getGenerator().generate(hero.getLevel());
         int center = map.getSize() / 2;
@@ -287,6 +297,140 @@ public class Game {
         return gson.fromJson(reader, Game.class);
     }
 
+    static public Game load(Connection connection, int id) throws SQLException {
+        // Load the Hero first
+        String sql = "SELECT name, save_path, experience, class, x, y FROM heroes WHERE id = ? LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if (!resultSet.next()) {
+            return null;
+        }
+        Hero hero = HeroFactory.newHero(resultSet.getString("class"), resultSet.getString("name"));
+        if (hero == null) {
+            return null;
+        }
+        hero.setExperience(resultSet.getInt("experience"));
+        int heroX = resultSet.getInt("x");
+        int heroY = resultSet.getInt("y");
+        String savePath = resultSet.getString("save_path");
+        // Load it's artefacts
+        sql = "SELECT name, rarity, attack, defense, hitpoints, slot FROM hero_artefacts WHERE hero_id = ? LIMIT 1";
+        statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        resultSet = statement.executeQuery();
+        List<ArtefactSlot> usedSlots = new ArrayList<>();
+        while (resultSet.next()) {
+            Artefact artefact = Artefact.fromResultSet(resultSet);
+            if (artefact != null) {
+                if (usedSlots.contains(artefact.getSlot())) {
+                    System.out.println(
+                            "Duplicate Artefact for slot " + artefact.getSlot() + " in Hero " + hero.getName());
+                }
+                hero.equipArtefact(artefact);
+                usedSlots.add(artefact.getSlot());
+            }
+        }
+
+        // Finalize the hero
+        hero.calculateFinalCaracteristics();
+
+        // Load current enemy
+        sql = "SELECT name, rank, level, attack, defense, hitpoints FROM hero_current_enemies WHERE hero_id = ? LIMIT 1";
+        statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        resultSet = statement.executeQuery();
+        Enemy currentEnemy = null;
+        if (resultSet.next()) {
+            currentEnemy = Enemy.fromResultSet(resultSet);
+        }
+
+        // Load current artefact drop
+        sql = "SELECT name, rarity, attack, defense, hitpoints, slot FROM hero_current_artefact WHERE hero_id = ? LIMIT 1";
+        statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        resultSet = statement.executeQuery();
+        Artefact currentArtefact = null;
+        if (resultSet.next()) {
+            currentArtefact = Artefact.fromResultSet(resultSet);
+        }
+
+        // Load Map
+        sql = "SELECT id, name, level, size FROM hero_map WHERE hero_id = ? LIMIT 1";
+        statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
+        resultSet = statement.executeQuery();
+        Map map = null;
+        if (resultSet.next()) {
+            String name = resultSet.getString("name");
+            int level = resultSet.getInt("level");
+            int size = resultSet.getInt("size");
+            int mapId = resultSet.getInt("id");
+            boolean invalid = name == null || level < 1 || size < 1;
+            List<Location> locations = new ArrayList<>();
+            if (!invalid) {
+                // Load and parse all locations
+                sql = "SELECT id, x, y, biome, enemies_visible, visible FROM hero_map_locations WHERE hero_map_id = ? ORDER BY x, y";
+                PreparedStatement selectStatement = connection.prepareStatement(sql);
+                selectStatement.setInt(1, mapId);
+                ResultSet locationsSet = selectStatement.executeQuery();
+                while (locationsSet.next()) {
+                    Location location = Location.fromResultSet(locationsSet);
+                    if (location == null) {
+                        invalid = true;
+                        break;
+                    } else {
+                        // TODO load enemies
+                        locations.add(location);
+                    }
+                }
+
+                // Validate locations
+                if (locations.size() != (size * size)) {
+                    invalid = true;
+                } else {
+                    for (int x = 0; x < size; x++) {
+                        for (int y = 0; y < size; y++) {
+                            Location location = locations.get(x * size + y);
+                            if (location == null || location.getX() != x || location.getY() != y) {
+                                invalid = true;
+                                break;
+                            }
+                        }
+                        if (invalid) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Delete invalid map
+            if (invalid) {
+                sql = "DELETE FROM hero_map WHERE hero_id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(sql);
+                deleteStatement.setInt(1, id);
+                deleteStatement.executeUpdate();
+            } else {
+                Location[][] arrLocations = new Location[size][size];
+                for (int x = 0; x < size; x++) {
+                    for (int y = 0; y < size; y++) {
+                        Location location = locations.get(x * size + y);
+                        arrLocations[x][y] = location;
+                    }
+                }
+                map = new Map(name, level, size, arrLocations);
+            }
+        }
+        if (map != null) {
+            hero.setPosition(new Coordinates(heroX, heroY));
+        }
+
+        Game game = new Game(hero, map, currentArtefact, currentEnemy);
+        game.setId(id);
+        game.setSavePath(savePath);
+        return game;
+    }
+
     protected void saveHero(Connection connection) throws SQLException {
         // Check that the ID is valid
         if (id > 0) {
@@ -297,16 +441,17 @@ public class Game {
             // If there is no results the ID is invalid and we will create a new entry
             if (!resultSet.next()) {
                 id = 0;
-                id = Optional.of(resultSet.getInt(1)).get();
+            } else {
+                id = Optional.of(resultSet.getInt("id")).get();
             }
         }
 
         String sql = null;
         boolean insert = false;
         if (id > 0) {
-            sql = "UPDATE heroes SET name = ?, save_path = ?, experience = ?, class = ? WHERE id = ?";
+            sql = "UPDATE heroes SET name = ?, save_path = ?, experience = ?, class = ?, x = ?, y = ? WHERE id = ?";
         } else {
-            sql = "INSERT INTO heroes(name, save_path, experience, class) VALUES (?, ?, ?, ?)";
+            sql = "INSERT INTO heroes(name, save_path, experience, class, x, y) VALUES (?, ?, ?, ?, ?, ?)";
             insert = true;
         }
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -314,17 +459,23 @@ public class Game {
         statement.setString(2, savePath);
         statement.setLong(3, hero.getExperience());
         statement.setString(4, hero.className());
+        Coordinates heroPosition = hero.getPosition();
+        if (heroPosition != null) {
+            statement.setInt(5, heroPosition.getX());
+            statement.setInt(6, heroPosition.getY());
+        } else {
+            statement.setInt(5, 0);
+            statement.setInt(6, 0);
+        }
         if (!insert) {
-            statement.setInt(5, id);
+            statement.setInt(7, id);
         }
 
         int inserted = statement.executeUpdate();
-        if (insert) {
-            if (inserted > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        id = Optional.of(resultSet.getInt(1)).get();
-                    }
+        if (insert && inserted > 0) {
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    id = Optional.of(resultSet.getInt(1)).get();
                 }
             }
         }
@@ -414,8 +565,8 @@ public class Game {
         deleteStatement.setInt(1, id);
         deleteStatement.executeUpdate();
 
-        if (enemyDrop != null) {
-            Artefact artefact = enemyDrop;
+        if (currentArtefact != null) {
+            Artefact artefact = currentArtefact;
             String insertSql = "INSERT INTO hero_current_artefact(hero_id, name, rarity, attack, defense, hitpoints, slot) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertSql);
             insertStatement.setInt(1, id);
@@ -442,7 +593,7 @@ public class Game {
 
         // Check if a map exists
         int mapId = 0;
-        String sql = "SELECT id, level, size FROM hero_map WHERE hero_id = ? LIMIT 1";
+        String sql = "SELECT id, name, level, size FROM hero_map WHERE hero_id = ? LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
@@ -450,13 +601,15 @@ public class Game {
         boolean maybeHasLocations = false;
         if (resultSet.next()) {
             mapId = resultSet.getInt("id");
-            if (resultSet.getInt("level") != map.getLevel() || resultSet.getInt("size") != map.getSize()) {
+            if (!resultSet.getString("name").equals(map.getName()) || resultSet.getInt("level") != map.getLevel()
+                    || resultSet.getInt("size") != map.getSize()) {
                 // If the level or size doesn't match, update them
-                sql = "UPDATE hero_map SET level = ?, size = ? WHERE id = ?";
+                sql = "UPDATE hero_map SET name = ?, level = ?, size = ? WHERE id = ?";
                 PreparedStatement updateStatement = connection.prepareStatement(sql);
-                updateStatement.setInt(1, map.getLevel());
-                updateStatement.setInt(2, map.getSize());
-                updateStatement.setLong(3, mapId);
+                updateStatement.setString(1, map.getName());
+                updateStatement.setInt(2, map.getLevel());
+                updateStatement.setInt(3, map.getSize());
+                updateStatement.setLong(4, mapId);
                 updateStatement.executeUpdate();
                 // -- and delete all locations
                 sql = "DELETE FROM hero_map_locations WHERE hero_map_id = ?";
@@ -467,11 +620,12 @@ public class Game {
                 maybeHasLocations = true;
             }
         } else {
-            sql = "INSERT INTO hero_map(hero_id, level, size) VALUES (?, ?, ?)";
+            sql = "INSERT INTO hero_map(hero_id, name, level, size) VALUES (?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             insertStatement.setInt(1, id);
-            insertStatement.setInt(2, map.getLevel());
-            insertStatement.setInt(3, map.getSize());
+            insertStatement.setString(2, map.getName());
+            insertStatement.setInt(3, map.getLevel());
+            insertStatement.setInt(4, map.getSize());
             int inserted = insertStatement.executeUpdate();
             if (inserted > 0) {
                 try (ResultSet insertSet = insertStatement.getGeneratedKeys()) {

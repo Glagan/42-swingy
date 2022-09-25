@@ -1,23 +1,11 @@
 package org.glagan.Controller;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.Set;
-
 import org.glagan.Character.Hero;
 import org.glagan.Character.HeroFactory;
 import org.glagan.Core.Game;
 import org.glagan.Core.Save;
 import org.glagan.View.HeroCreation;
 import org.glagan.View.SaveIndex;
-
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 
 public class SaveController extends Controller {
     protected int selected;
@@ -30,52 +18,11 @@ public class SaveController extends Controller {
     public SaveController(org.glagan.Core.Swingy swingy) {
         super(swingy);
         this.reset();
-        this.saves = reloadSaves();
+        this.saves = null;
     }
 
     public Save[] reloadSaves() {
-        String[] files = Save.listSaveFiles();
-        if (files == null) {
-            return null;
-        }
-
-        Save[] saves = new Save[files.length];
-        int index = 0;
-        for (String path : files) {
-            try {
-                Reader reader = new FileReader(path);
-                Game game = Game.deserialize(reader);
-                game.setSavePath(path);
-                Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-                Set<ConstraintViolation<Game>> constraintViolations = validator.validate(game);
-                if (constraintViolations.size() > 0) {
-                    ConstraintViolation<Game> nextError = constraintViolations.iterator().next();
-                    saves[index] = new Save(path, game, true,
-                            "Validation failed: " + nextError.getPropertyPath() + " " + nextError.getMessage());
-                } else if (game.getMap() != null) {
-                    if (!game.getMap().validateLocations()) {
-                        saves[index] = new Save(path, game, true, "The map doesn't have valid locations for it's size");
-                    } else if (game.getHero().getPosition() == null) {
-                        saves[index] = new Save(path, game, true, "The hero is not in the map");
-                    } else if (game.getHero().getPosition().getX() >= game.getMap().getSize()
-                            || game.getHero().getPosition().getY() >= game.getMap().getSize()) {
-                        saves[index] = new Save(path, game, true, "The hero is outside of the map");
-                    }
-                }
-                if (saves[index] == null) {
-                    saves[index] = new Save(path, game, false, null);
-                }
-            } catch (FileNotFoundException e) {
-                saves[index] = new Save(path, null, true, "File not found");
-            } catch (JsonSyntaxException e) {
-                saves[index] = new Save(path, null, true, "Invalid syntax in save file: " + e.getMessage());
-            } catch (JsonIOException e) {
-                saves[index] = new Save(path, null, true, "Failed to read file: " + e.getMessage());
-            }
-            index += 1;
-        }
-
-        this.saves = saves;
+        this.saves = Save.all();
         return saves;
     }
 

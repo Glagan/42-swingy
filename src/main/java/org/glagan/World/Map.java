@@ -45,9 +45,15 @@ public class Map {
         if (locations.length != size) {
             return false;
         }
-        for (Location[] row : locations) {
-            if (row.length != size) {
+        for (int x = 0; x < size; x++) {
+            if (locations[x] == null || locations[x].length != size) {
                 return false;
+            }
+            for (int y = 0; y < size; y++) {
+                Location location = locations[x][y];
+                if (location.getX() != x || location.getY() != y) {
+                    return false;
+                }
             }
         }
         return true;

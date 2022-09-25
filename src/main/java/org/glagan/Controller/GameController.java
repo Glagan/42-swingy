@@ -47,7 +47,7 @@ public class GameController extends Controller {
         }
         Game game = swingy.getGame();
         if (event.equalsIgnoreCase("s") || event.equalsIgnoreCase("show")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             if (CurrentDisplay.getMode().equals(Mode.GUI)) {
@@ -55,37 +55,37 @@ public class GameController extends Controller {
             }
             return true;
         } else if (event.equalsIgnoreCase("i") || event.equalsIgnoreCase("inventory")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             new Inventory(this, game.getMap(), game.getHero()).render();
             return true;
         } else if (event.equalsIgnoreCase("mn")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             moveHeroInDirection(Direction.NORTH);
             return true;
         } else if (event.equalsIgnoreCase("me")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             moveHeroInDirection(Direction.EAST);
             return true;
         } else if (event.equalsIgnoreCase("ms")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             moveHeroInDirection(Direction.SOUTH);
             return true;
         } else if (event.equalsIgnoreCase("mw")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             moveHeroInDirection(Direction.WEST);
             return true;
         } else if (event.startsWith("m ") || event.startsWith("move ")) {
-            if (game.getEnemyDrop() != null) {
+            if (game.getCurrentArtefact() != null) {
                 return false;
             }
             String[] parts = event.split(" ");
@@ -111,10 +111,10 @@ public class GameController extends Controller {
                 }
             }
         } else if (event.equalsIgnoreCase("e") || event.equalsIgnoreCase("equip")) {
-            if (game.getEnemyDrop() == null) {
+            if (game.getCurrentArtefact() == null) {
                 return false;
             }
-            game.getHero().equipArtefact(game.getEnemyDrop());
+            game.getHero().equipArtefact(game.getCurrentArtefact());
             game.setEnemyDrop(null);
             game.save();
             if (CurrentDisplay.getMode().equals(Mode.GUI)) {
@@ -122,7 +122,7 @@ public class GameController extends Controller {
             }
             return true;
         } else if (event.equalsIgnoreCase("l") || event.equalsIgnoreCase("leave")) {
-            if (game.getEnemyDrop() == null) {
+            if (game.getCurrentArtefact() == null) {
                 return false;
             }
             game.setEnemyDrop(null);
@@ -142,8 +142,8 @@ public class GameController extends Controller {
         Game game = swingy.getGame();
         Hero hero = game.getHero();
 
-        if (game.getEnemyDrop() != null) {
-            new ArtefactDrop(this, game.getHero(), game.getEnemyDrop()).render();
+        if (game.getCurrentArtefact() != null) {
+            new ArtefactDrop(this, game.getHero(), game.getCurrentArtefact()).render();
         } else if (game.getCurrentEnemy() != null) {
             swingy.useFightController();
         } else {

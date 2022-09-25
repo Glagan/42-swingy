@@ -119,6 +119,10 @@ public abstract class Hero {
         return experience;
     }
 
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
     public Artefact getWeapon() {
         return weapon;
     }
