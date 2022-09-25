@@ -120,7 +120,7 @@ public class Save {
                 }
             } catch (SQLException e) {
                 System.out.println("\u001B[31mFailed to get heroes from the database: \u001B[0m" + e.getMessage());
-                e.printStackTrace();
+                // e.printStackTrace();
                 Swingy.getInstance().closeDatabase();
             }
         }

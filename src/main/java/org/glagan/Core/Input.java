@@ -21,7 +21,7 @@ public class Input {
             }
             input = scanner.nextLine();
         } catch (IllegalStateException | NoSuchElementException e) {
-            // System.out.println("System.in closed");
+            // Ignore expected errors
         }
         return input;
     }

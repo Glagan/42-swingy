@@ -554,7 +554,6 @@ public class Game {
         deleteStatement.executeUpdate();
 
         if (currentEnemy != null) {
-            System.out.println("insert current enemy");
             Enemy enemy = currentEnemy;
             String insertSql = "INSERT INTO hero_current_enemies(hero_id, name, rank, level, attack, defense, hitpoints) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertSql);
@@ -775,7 +774,7 @@ public class Game {
                 return true;
             } catch (SQLException e) {
                 System.out.println("\u001B[31mFailed to save to the database: \u001B[0m" + e.getMessage());
-                e.printStackTrace();
+                // e.printStackTrace();
                 Swingy.getInstance().closeDatabase();
             }
             if (forceSave.length > 0 && forceSave[0]) {
@@ -807,7 +806,7 @@ public class Game {
                 deleteStatement.setInt(1, id);
                 deleteStatement.executeUpdate();
             } catch (SQLException e) {
-                System.out.println("\u001B[31mFailed to save to the database: \u001B[0m" + e.getMessage());
+                System.out.println("\u001B[31mFailed to delete from the database: \u001B[0m" + e.getMessage());
                 Swingy.getInstance().closeDatabase();
             }
         }
