@@ -107,6 +107,7 @@ public class SaveController extends Controller {
                 return false;
             }
             if (split[1].length() < 1 || split[1].length() > 20) {
+                System.out.println("Invalid name, must be between 1 and 20 characters");
                 return false;
             }
             heroName = split[1];
@@ -114,7 +115,7 @@ public class SaveController extends Controller {
         } else if (event.startsWith("set-class ")) {
             String[] split = event.split(" ");
             if (split.length != 2) {
-                System.out.println("Invalid class");
+                System.out.println("Invalid class, expected Magician, Paladin or Warrior");
                 return false;
             }
             heroClass = split[1];
